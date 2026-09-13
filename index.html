@@ -36,7 +36,7 @@ footer{text-align:center;color:#68747b;font-size:12px;padding:25px}
 .modalbox button{padding:10px 15px;border:0;border-radius:6px;cursor:pointer;font-weight:bold}.enter{background:#24566a;color:#fff}.cancel{background:#e5e7eb;color:#17242b;margin-left:7px}.error{color:#9b2525;min-height:20px;font-size:13px}
 input,select{border:1px solid var(--line);border-radius:6px;font-size:14px}
 .agent{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:8px;padding:12px;margin:8px 0;background:#fafbfc}.remove{background:#8b2525;color:white;border:0;border-radius:5px;padding:7px 10px;cursor:pointer}
-</style>
+.phone-guide{background:#101820;color:#f3f5f6;border-radius:12px;padding:22px;overflow:auto}.phone-guide h3{text-align:center;letter-spacing:2px;margin:4px 0 8px;font-size:20px}.phone-subtitle{text-align:center;font-size:18px;letter-spacing:1px;margin-bottom:18px}.phone-top{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0 25px}.phone-top>div{border:3px solid #e52323;border-radius:50px;padding:12px;text-align:center}.phone-top b{display:block}.phone-top span,.phone-list span{display:block;margin-top:5px}.phone-columns{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}.phone-list{background:#1c2934;border-radius:28px;padding:18px}.phone-list>div{padding:7px 4px;text-align:center}.phone-list b,.phone-box b{color:#35b8ff}.phone-box{background:#1c2934;border-radius:28px;padding:18px;margin-bottom:16px;text-align:center}.phone-box h4{text-decoration:underline;margin:0 0 10px;font-size:18px}.phone-box p{margin:7px 0}@media(max-width:800px){.phone-top,.phone-columns{grid-template-columns:1fr}.sheet-frame{height:70vh;min-height:520px}}</style>
 </head>
 <body>
 <header><h1>AGENCIA SECRETA</h1><p>PORTAL INTERNO DE INVESTIGACIÓN</p></header>
@@ -79,42 +79,98 @@ input,select{border:1px solid var(--line);border-radius:6px;font-size:14px}
 <button class="back" onclick="showPage('inicio')">← Volver</button></div></section>
 
 <section id="comunicaciones" class="page">
-<div class="sheet-card">
-<h2>📡 Comunicaciones</h2>
-<p>Centro interno de comunicaciones de la Agencia.</p>
+  <div class="sheet-card">
+    <h2>📡 Comunicaciones</h2>
+    <p>Centro interno de comunicaciones de la Agencia.</p>
 
-<div class="grid" style="margin-top:20px">
-<div class="item" onclick="showComm('telefonica')">
-<b>☎️ Guía telefónica</b>
-<span>Guía de marcación rápida y comunicaciones internas.</span>
-</div>
-<div class="item" onclick="showComm('avisos')">
-<b>📢 Avisos de la Agencia</b>
-<span>Tablón de avisos actualizado desde Google Sheets.</span>
-</div>
-</div>
+    <div class="grid" style="margin-top:20px">
+      <div class="item" onclick="showComm('telefonica')">
+        <b>☎️ Guía telefónica</b>
+        <span>Guía de marcación rápida y comunicaciones internas.</span>
+      </div>
+      <div class="item" onclick="showComm('avisos')">
+        <b>📢 Avisos de la Agencia</b>
+        <span>Hoja de avisos de la Agencia.</span>
+      </div>
+    </div>
 
-<div id="telefonica" class="comm-panel" style="display:none;margin-top:20px">
-<div class="sheet-card" style="margin-bottom:0">
-<h3>☎️ GUÍA TELEFÓNICA</h3>
-<p class="sheet-hint">Guía de comunicaciones internas de la Agencia.</p>
-<div class="code">La captura de la guía telefónica está preparada para integrarse aquí como imagen del portal.</div>
-</div>
-</div>
+    <div id="telefonica" class="comm-panel" style="display:none;margin-top:20px">
+      <div class="phone-guide">
+        <h3>GUÍA DE MARCACIÓN RÁPIDA</h3>
+        <div class="phone-subtitle">AGENCIA CENTRAL DE INVESTIGACIÓN</div>
+        <h3>SISTEMA DE COMUNICACIONES INTERNAS</h3>
+        <div class="phone-subtitle">MARCACIÓN DIRECTA</div>
 
-<div id="avisos" class="comm-panel" style="display:none;margin-top:20px">
-<div class="sheet-card" style="margin-bottom:0">
-<h3>📢 AVISOS DE LA AGENCIA</h3>
-<p class="sheet-hint">Información sincronizada con la hoja de Google Sheets.</p>
-<iframe id="avisosFrame" class="sheet-frame" title="Avisos de la Agencia"
-src="https://docs.google.com/spreadsheets/d/1Hn_oprid9VGgd7w5jP654yWw31Ap3cRb6mxYA8kk3Vw/edit?usp=sharing"
-ondblclick="openOriginalSheet('avisos')"></iframe>
-<p class="sheet-hint">Doble clic sobre la hoja para abrirla directamente en Google Sheets.</p>
-</div>
-</div>
+        <div class="phone-top">
+          <div><b>★001 DIRECTOR</b><span>Máxima autoridad de la Agencia</span></div>
+          <div><b>★002 COMANDANTE</b><span>Supervisión general de operaciones</span></div>
+          <div><b>★013 CAP INFORMÁTICA</b><span>Sistemas y tecnología</span></div>
+        </div>
 
-<button class="back" onclick="showPage('inicio')">← Volver</button>
-</div>
+        <div class="phone-columns">
+          <div class="phone-list">
+            <div><b>★ 000 — CENTRAL</b><span>Operador principal de la agencia</span></div>
+            <div><b>★ 013 — INFORMÁTICA</b><span>Ordenadores, sistemas y tecnología</span></div>
+            <div><b>★ 014 — COMUNICACIONES</b><span>Radios, teléfonos y comunicaciones</span></div>
+            <div><b>★ 015 — ARCHIVO</b><span>Expedientes y documentación</span></div>
+            <div><b>★ 016 — INTELIGENCIA</b><span>Información sobre sospechosos y casos</span></div>
+            <div><b>★ 017 — OPERACIONES</b><span>Misiones y coordinación de agentes</span></div>
+            <div><b>★ 018 — SEGURIDAD</b><span>Incidentes y protocolos de seguridad</span></div>
+            <div><b>★ 019 — LABORATORIO</b><span>Pruebas y análisis</span></div>
+            <div><b>★ 020 — VIGILANCIA</b><span>Seguimientos y vigilancia</span></div>
+            <div><b>★ 021 — CONTROL DE AGENTES</b><span>Localización y coordinación de agentes</span></div>
+            <div><b>★ 022 — TRANSPORTE</b><span>Vehículos y desplazamientos</span></div>
+            <div><b>★ 023 — URGENCIAS</b><span>Situaciones urgentes</span></div>
+            <div><b>★ 024 — DIRECCIÓN</b><span>Jefatura de la agencia</span></div>
+            <div><b>★ 025 — CASOS ESPECIALES</b><span>Investigaciones especiales</span></div>
+            <div><b>★ 027 — EQUIPAMIENTO</b><span>Material de investigación</span></div>
+            <div><b>★ 028 — PRUEBAS</b><span>Registro y entrega de evidencias</span></div>
+          </div>
+
+          <div>
+            <div class="phone-box"><h4>🔢 ATAJOS DEL TERMINAL</h4>
+              <p><b>#00</b> — MENÚ PRINCIPAL</p>
+              <p><b>#01</b> — ÚLTIMO CASO</p>
+              <p><b>#02</b> — LISTA DE AGENTES</p>
+              <p><b>#03</b> — LISTA DE SOSPECHOSOS</p>
+              <p><b>#04</b> — CASOS ABIERTOS</p>
+              <p><b>#06</b> — MENSAJES</p>
+              <p><b>#08</b> — LOCALIZACIÓN DE AGENTES</p>
+              <p><b>#09</b> — BLOQUEAR TERMINAL</p>
+            </div>
+            <div class="phone-box"><h4>🚓 UNIDADES EXTERNAS</h4>
+              <p><b>#101</b> — POLICÍA LOCAL</p>
+              <p><b>#102</b> — MOSSOS D'ESQUADRA</p>
+              <p><b>#103</b> — GEO — UNIDAD DE ÉLITE</p>
+              <p><b>#104</b> — TEDAX — ANTIEXPLOSIVOS</p>
+              <p><b>#105</b> — ANTIDISTURBIOS</p>
+              <p><b>#107</b> — BOMBEROS</p>
+              <p><b>#111</b> — UNIDAD CANINA</p>
+            </div>
+            <div class="phone-box"><h4>🚨 OPERACIONES</h4>
+              <p><b>#111</b> — SOLICITAR AGENTE</p>
+              <p><b>#222</b> — SOLICITAR VEHÍCULO</p>
+              <p><b>#333</b> — SOLICITAR EQUIPO</p>
+              <p><b>#444</b> — AISLAR ZONA</p>
+              <p><b>#555</b> — PROTOCOLO ESPECIAL</p>
+              <p><b>#777</b> — INICIAR OPERACIÓN</p>
+              <p><b>#888</b> — FINALIZAR OPERACIÓN</p>
+              <p><b>#000</b> — CONTACTAR CON CENTRAL</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="avisos" class="comm-panel" style="display:none;margin-top:20px">
+      <h3>📢 AVISOS DE LA AGENCIA</h3>
+      <p class="sheet-hint">Hoja de Google Sheets conectada al portal.</p>
+      <iframe id="avisosFrame" class="sheet-frame" title="Avisos de la Agencia"
+        src="https://docs.google.com/spreadsheets/d/1Hn_oprid9VGgd7w5jP654yWw31Ap3cRb6mxYA8kk3Vw/edit?usp=sharing"></iframe>
+    </div>
+
+    <button class="back" onclick="showPage('inicio')">← Volver</button>
+  </div>
 </section>
 <section id="agentes" class="page"><div class="sheet-card"><h2>👮 Agentes</h2><p>Directorio centralizado de agentes de la Agencia.</p><div class="code">La hoja de cálculo se conectará aquí cuando introduzcas su enlace.</div><br><button class="back" onclick="openOriginalSheet('agentes')">Abrir hoja de agentes</button><button class="back" onclick="showPage('inicio')">← Volver</button></div></section>
 </main>
