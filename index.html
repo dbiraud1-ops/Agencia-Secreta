@@ -172,16 +172,25 @@ input,select{border:1px solid var(--line);border-radius:6px;font-size:14px}
     <button class="back" onclick="showPage('inicio')">← Volver</button>
   </div>
 </section>
-<section id="agentes" class="page"><div class="sheet-card"><h2>👮 Agentes</h2><p>Directorio centralizado de agentes de la Agencia.</p><div class="code">La hoja de cálculo se conectará aquí cuando introduzcas su enlace.</div><br><button class="back" onclick="openOriginalSheet('agentes')">Abrir hoja de agentes</button><button class="back" onclick="showPage('inicio')">← Volver</button></div></section>
+<section id="agentes" class="page">
+  <div class="sheet-card">
+    <h2>👮 Agentes</h2>
+    <p>Directorio centralizado de agentes de la Agencia.</p>
+    <iframe class="sheet-frame" title="Agentes de la Agencia"
+      src="https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S1_zfnlGra0Rntruyr5yfxckNLI/edit?usp=sharing"></iframe>
+    <p class="sheet-hint">Doble clic sobre la hoja para abrirla directamente en Google Sheets.</p>
+    <button class="back" onclick="showPage('inicio')">← Volver</button>
+  </div>
+</section>
 </main>
 
 <footer>DOCUMENTO FICTICIO · AGENCIA DE INVESTIGACIÓN · NO ES UN PORTAL OFICIAL</footer>
 <script>
 const SHEET_URLS = {
-  casos: 'https://docs.google.com/spreadsheets/d/1UggxnFhR_qOjQTvCJB7kMUSJHyTr2S4WpBT7wNM2pzc/edit?gid=94868834#gid=94868834',
+  casos: '',
   comunicaciones: '',
   avisos: 'https://docs.google.com/spreadsheets/d/1Hn_oprid9VGgd7w5jP654yWw31Ap3cRb6mxYA8kk3Vw/edit?usp=sharing',
-  agentes: ''
+  agentes: 'https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S1_zfnlGra0Rntruyr5yfxckNLI/edit?usp=sharing'
 };
 const AGENCIA_PASSWORD='AGENCIA2026'; let authenticated=false;
 
