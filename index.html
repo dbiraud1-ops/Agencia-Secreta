@@ -187,7 +187,7 @@ input,select{border:1px solid var(--line);border-radius:6px;font-size:14px}
 <footer>DOCUMENTO FICTICIO · AGENCIA DE INVESTIGACIÓN · NO ES UN PORTAL OFICIAL</footer>
 <script>
 const SHEET_URLS = {
-  casos: '',
+  casos: 'https://docs.google.com/spreadsheets/d/1UggxnFhR_qOjQTvCJB7kMUSJHyTr2S4WpBT7wNM2pzc/edit?usp=sharing',
   comunicaciones: '',
   avisos: 'https://docs.google.com/spreadsheets/d/1Hn_oprid9VGgd7w5jP654yWw31Ap3cRb6mxYA8kk3Vw/edit?usp=sharing',
   agentes: 'https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S1_zfnlGra0Rntruyr5yfxckNLI/edit?usp=sharing'
@@ -202,7 +202,7 @@ function requireAuth(){if(!authenticated){document.getElementById('authScreen').
 function showPage(id){if(!requireAuth())return;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const target=document.getElementById(id);if(target)target.classList.add('active');document.querySelectorAll('#mainNav button').forEach(b=>{const onclick=b.getAttribute('onclick')||'';b.classList.toggle('active',onclick.includes("showPage('"+id+"')"))});window.scrollTo({top:0,behavior:'smooth'});if(id==='casos')loadSheet('casos')}
 function loadSheet(type){const frame=document.getElementById(type+'Frame');const url=SHEET_URLS[type];if(frame&&url&&!frame.src)frame.src=url}
 function openOriginalSheet(type){if(!requireAuth())return;const url=SHEET_URLS[type];if(url)window.open(url,'_blank','noopener,noreferrer')}
-function openSheet(type){if(!requireAuth())return;showPage(type)}
+function openSheet(type){if(!requireAuth())return;showPage(type);loadSheet(type)}
 function showComm(id){if(!requireAuth())return;document.querySelectorAll('.comm-panel').forEach(p=>p.style.display='none');const panel=document.getElementById(id);if(panel)panel.style.display='block';if(id==='avisos')loadSheet('avisos')}
 document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 </script>
