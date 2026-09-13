@@ -78,7 +78,44 @@ input,select{border:1px solid var(--line);border-radius:6px;font-size:14px}
 <iframe id="casosFrame" class="sheet-frame" title="Hoja de casos" ondblclick="openOriginalSheet('casos')"></iframe>
 <button class="back" onclick="showPage('inicio')">← Volver</button></div></section>
 
-<section id="comunicaciones" class="page"><div class="sheet-card"><h2>📡 Comunicaciones</h2><p>Registro centralizado de las comunicaciones de la Agencia.</p><div class="code">La hoja de cálculo se conectará aquí cuando introduzcas su enlace.</div><br><button class="back" onclick="openOriginalSheet('comunicaciones')">Abrir hoja de comunicaciones</button><button class="back" onclick="showPage('inicio')">← Volver</button></div></section>
+<section id="comunicaciones" class="page">
+<div class="sheet-card">
+<h2>📡 Comunicaciones</h2>
+<p>Centro interno de comunicaciones de la Agencia.</p>
+
+<div class="grid" style="margin-top:20px">
+<div class="item" onclick="showComm('telefonica')">
+<b>☎️ Guía telefónica</b>
+<span>Guía de marcación rápida y comunicaciones internas.</span>
+</div>
+<div class="item" onclick="showComm('avisos')">
+<b>📢 Avisos de la Agencia</b>
+<span>Tablón de avisos actualizado desde Google Sheets.</span>
+</div>
+</div>
+
+<div id="telefonica" class="comm-panel" style="display:none;margin-top:20px">
+<div class="sheet-card" style="margin-bottom:0">
+<h3>☎️ GUÍA TELEFÓNICA</h3>
+<p class="sheet-hint">Guía de comunicaciones internas de la Agencia.</p>
+<div class="code">La captura de la guía telefónica está preparada para integrarse aquí como imagen del portal.</div>
+</div>
+</div>
+
+<div id="avisos" class="comm-panel" style="display:none;margin-top:20px">
+<div class="sheet-card" style="margin-bottom:0">
+<h3>📢 AVISOS DE LA AGENCIA</h3>
+<p class="sheet-hint">Información sincronizada con la hoja de Google Sheets.</p>
+<iframe id="avisosFrame" class="sheet-frame" title="Avisos de la Agencia"
+src="https://docs.google.com/spreadsheets/d/1Hn_oprid9VGgd7w5jP654yWw31Ap3cRb6mxYA8kk3Vw/edit?usp=sharing"
+ondblclick="openOriginalSheet('avisos')"></iframe>
+<p class="sheet-hint">Doble clic sobre la hoja para abrirla directamente en Google Sheets.</p>
+</div>
+</div>
+
+<button class="back" onclick="showPage('inicio')">← Volver</button>
+</div>
+</section>
 <section id="agentes" class="page"><div class="sheet-card"><h2>👮 Agentes</h2><p>Directorio centralizado de agentes de la Agencia.</p><div class="code">La hoja de cálculo se conectará aquí cuando introduzcas su enlace.</div><br><button class="back" onclick="openOriginalSheet('agentes')">Abrir hoja de agentes</button><button class="back" onclick="showPage('inicio')">← Volver</button></div></section>
 </main>
 
@@ -87,6 +124,7 @@ input,select{border:1px solid var(--line);border-radius:6px;font-size:14px}
 const SHEET_URLS = {
   casos: 'https://docs.google.com/spreadsheets/d/1UggxnFhR_qOjQTvCJB7kMUSJHyTr2S4WpBT7wNM2pzc/edit?gid=94868834#gid=94868834',
   comunicaciones: '',
+  avisos: 'https://docs.google.com/spreadsheets/d/1Hn_oprid9VGgd7w5jP654yWw31Ap3cRb6mxYA8kk3Vw/edit?usp=sharing',
   agentes: ''
 };
 const AGENCIA_PASSWORD='AGENCIA2026'; let authenticated=false;
@@ -100,6 +138,7 @@ function showPage(id){if(!requireAuth())return;document.querySelectorAll('.page'
 function loadSheet(type){const frame=document.getElementById(type+'Frame');const url=SHEET_URLS[type];if(frame&&url&&!frame.src)frame.src=url}
 function openOriginalSheet(type){if(!requireAuth())return;const url=SHEET_URLS[type];if(url)window.open(url,'_blank','noopener,noreferrer')}
 function openSheet(type){if(!requireAuth())return;showPage(type)}
+function showComm(id){if(!requireAuth())return;document.querySelectorAll('.comm-panel').forEach(p=>p.style.display='none');const panel=document.getElementById(id);if(panel)panel.style.display='block';if(id==='avisos')loadSheet('avisos')}
 document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 </script>
 </body></html>
