@@ -36,9 +36,45 @@ footer{text-align:center;color:#68747b;font-size:12px;padding:25px}
 .modalbox button{padding:10px 15px;border:0;border-radius:6px;cursor:pointer;font-weight:bold}.enter{background:#24566a;color:#fff}.cancel{background:#e5e7eb;color:#17242b;margin-left:7px}.error{color:#9b2525;min-height:20px;font-size:13px}
 input,select{border:1px solid var(--line);border-radius:6px;font-size:14px}
 .agent{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:8px;padding:12px;margin:8px 0;background:#fafbfc}.remove{background:#8b2525;color:white;border:0;border-radius:5px;padding:7px 10px;cursor:pointer}
-.phone-guide{background:#101820;color:#f3f5f6;border-radius:12px;padding:22px;overflow:auto}.phone-guide h3{text-align:center;letter-spacing:2px;margin:4px 0 8px;font-size:20px}.phone-subtitle{text-align:center;font-size:18px;letter-spacing:1px;margin-bottom:18px}.phone-top{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0 25px}.phone-top>div{border:3px solid #e52323;border-radius:50px;padding:12px;text-align:center}.phone-top b{display:block}.phone-top span,.phone-list span{display:block;margin-top:5px}.phone-columns{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}.phone-list{background:#1c2934;border-radius:28px;padding:18px}.phone-list>div{padding:7px 4px;text-align:center}.phone-list b,.phone-box b{color:#35b8ff}.phone-box{background:#1c2934;border-radius:28px;padding:18px;margin-bottom:16px;text-align:center}.phone-box h4{text-decoration:underline;margin:0 0 10px;font-size:18px}.phone-box p{margin:7px 0}@media(max-width:800px){.phone-top,.phone-columns{grid-template-columns:1fr}.sheet-frame{height:70vh;min-height:520px}}</style>
+.phone-guide{background:#101820;color:#f3f5f6;border-radius:12px;padding:22px;overflow:auto}.phone-guide h3{text-align:center;letter-spacing:2px;margin:4px 0 8px;font-size:20px}.phone-subtitle{text-align:center;font-size:18px;letter-spacing:1px;margin-bottom:18px}.phone-top{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0 25px}.phone-top>div{border:3px solid #e52323;border-radius:50px;padding:12px;text-align:center}.phone-top b{display:block}.phone-top span,.phone-list span{display:block;margin-top:5px}.phone-columns{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}.phone-list{background:#1c2934;border-radius:28px;padding:18px}.phone-list>div{padding:7px 4px;text-align:center}.phone-list b,.phone-box b{color:#35b8ff}.phone-box{background:#1c2934;border-radius:28px;padding:18px;margin-bottom:16px;text-align:center}.phone-box h4{text-decoration:underline;margin:0 0 10px;font-size:18px}.phone-box p{margin:7px 0}@media(max-width:800px){.phone-top,.phone-columns{grid-template-columns:1fr}.sheet-frame{height:70vh;min-height:520px}}
+
+/* ===================== SISTEMA "YO" (nuevo) ===================== */
+#yoBtn{position:fixed;top:14px;left:14px;z-index:20;background:var(--blue);color:#fff;border:0;border-radius:6px;padding:10px 16px;font-weight:bold;cursor:pointer;box-shadow:0 4px 14px #0003;letter-spacing:1px}
+#yoBtn:hover{opacity:.9}
+.yo-modal{display:none;position:fixed;inset:0;background:#17242bcc;align-items:center;justify-content:center;padding:20px;z-index:60}
+.yo-modal.show{display:flex}
+.yo-box{background:#fff;width:min(520px,100%);max-height:88vh;overflow:auto;border-radius:12px;padding:26px;border:2px solid var(--blue);box-shadow:0 12px 40px #0004}
+.yo-box.wide{width:min(880px,100%)}
+.yo-box h2{margin-top:0;color:var(--blue);letter-spacing:1px}
+.yo-box h3{color:var(--blue);margin:20px 0 10px;border-top:1px solid var(--line);padding-top:14px;font-size:14px;letter-spacing:1px}
+.yo-box label{font-size:12px;font-weight:bold;color:#58666e;display:block;margin-top:8px}
+.yo-box input,.yo-box select{width:100%;padding:11px;border:1px solid var(--line);border-radius:6px;margin:4px 0 10px;font-size:14px}
+.yo-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.yo-btn-row{margin-top:16px;text-align:right}
+.yo-btn-row button{padding:10px 16px;border:0;border-radius:6px;cursor:pointer;font-weight:bold;margin-left:8px}
+.yo-primary{background:var(--blue);color:#fff}
+.yo-secondary{background:#e5e7eb;color:#17242b}
+.yo-danger{background:#8b2525;color:#fff}
+.yo-error{color:#9b2525;font-size:13px;min-height:18px}
+.yo-profile-row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding:9px 0;font-size:14px}
+.yo-profile-row b{color:var(--dark)}
+.yo-section-title{font-weight:bold;color:var(--blue);margin:18px 0 8px;text-transform:uppercase;font-size:13px;letter-spacing:1px;border-top:1px solid var(--line);padding-top:14px}
+.yo-agent-row{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:8px 0;background:#fafbfc;flex-wrap:wrap;gap:8px}
+.yo-agent-row .yo-pass{font-family:monospace;background:#edf1f3;padding:4px 8px;border-radius:5px}
+.yo-agent-row button{border:0;border-radius:5px;padding:7px 11px;cursor:pointer;font-weight:bold;font-size:12px}
+.yo-show-btn{background:#e0e8ec;color:var(--blue)}
+.yo-edit-btn{background:var(--blue);color:#fff}
+.yo-del-btn{background:#8b2525;color:#fff}
+.yo-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0}
+.yo-stat{background:#edf1f3;border-radius:7px;padding:12px;text-align:center}
+.yo-stat b{display:block;font-size:18px;color:var(--blue)}
+.yo-stat span{font-size:12px;color:#58666e}
+@media(max-width:600px){.yo-field-grid{grid-template-columns:1fr}#yoBtn{top:10px;left:10px;padding:8px 12px;font-size:13px}}
+</style>
 </head>
 <body>
+<button id="yoBtn" onclick="openYoLogin()">YO</button>
+
 <header><h1>AGENCIA SECRETA</h1><p>PORTAL INTERNO DE INVESTIGACIÓN</p></header>
 <nav id="mainNav" class="hidden">
 <button data-page="inicio" class="active" onclick="showPage('inicio')">Centro del Agente</button>
@@ -185,6 +221,84 @@ input,select{border:1px solid var(--line);border-radius:6px;font-size:14px}
 </main>
 
 <footer>DOCUMENTO FICTICIO · AGENCIA DE INVESTIGACIÓN · NO ES UN PORTAL OFICIAL</footer>
+
+<!-- ===================== SISTEMA "YO" — MODALES (nuevo) ===================== -->
+<div id="yoLoginModal" class="yo-modal">
+  <div class="yo-box">
+    <h2>🪪 IDENTIFICACIÓN — YO</h2>
+    <p style="color:#58666e;font-size:14px">Introduce tu contraseña personal para acceder a tu perfil.</p>
+    <label>CONTRASEÑA PERSONAL</label>
+    <input id="yoPasswordInput" type="password" autocomplete="off" placeholder="Contraseña personal">
+    <div id="yoLoginError" class="yo-error"></div>
+    <div class="yo-btn-row">
+      <button class="yo-secondary" onclick="closeYoModal('yoLoginModal')">CANCELAR</button>
+      <button class="yo-primary" onclick="yoAccess()">ACCEDER</button>
+    </div>
+  </div>
+</div>
+
+<div id="yoProfileModal" class="yo-modal">
+  <div class="yo-box wide">
+    <div id="yoProfileContent"></div>
+    <div class="yo-btn-row">
+      <button class="yo-secondary" onclick="yoLogout()">CERRAR SESIÓN</button>
+    </div>
+  </div>
+</div>
+
+<div id="yoAgentFormModal" class="yo-modal">
+  <div class="yo-box wide">
+    <h2 id="yoAgentFormTitle">＋ AÑADIR AGENTE</h2>
+    <div class="yo-error" id="yoAgentFormError"></div>
+
+    <h3>IDENTIFICACIÓN</h3>
+    <div class="yo-field-grid">
+      <div><label>Número de agente *</label><input id="fNumero"></div>
+      <div><label>Nombre completo *</label><input id="fNombre"></div>
+    </div>
+    <label>Alias / código operativo</label><input id="fAlias">
+
+    <h3>INFORMACIÓN</h3>
+    <div class="yo-field-grid">
+      <div><label>Fecha de incorporación</label><input id="fFecha" type="date"></div>
+      <div><label>Estado</label><input id="fEstado" placeholder="Activo / Inactivo..."></div>
+      <div><label>Rango</label><input id="fRango"></div>
+      <div><label>Nivel de autorización</label><input id="fNivel"></div>
+      <div><label>Unidad</label><input id="fUnidad"></div>
+      <div><label>Especialidad</label><input id="fEspecialidad"></div>
+      <div><label>Zona asignada</label><input id="fZona"></div>
+      <div><label>Supervisor</label><input id="fSupervisor"></div>
+    </div>
+
+    <h3>SEGURIDAD</h3>
+    <label>Contraseña personal *</label><input id="fPassword" type="text">
+
+    <h3>ACTIVIDAD</h3>
+    <div class="yo-field-grid">
+      <div><label>Casos asignados</label><input id="fCasos" type="number" value="0"></div>
+      <div><label>Pistas registradas</label><input id="fPistas" type="number" value="0"></div>
+      <div><label>Expedientes consultados</label><input id="fExpedientes" type="number" value="0"></div>
+    </div>
+
+    <input type="hidden" id="fEditingId">
+    <div class="yo-btn-row">
+      <button class="yo-secondary" onclick="closeYoModal('yoAgentFormModal')">CANCELAR</button>
+      <button class="yo-primary" onclick="saveAgentForm()">GUARDAR AGENTE</button>
+    </div>
+  </div>
+</div>
+
+<div id="yoDeleteModal" class="yo-modal">
+  <div class="yo-box">
+    <h2>⚠️ CONFIRMAR ELIMINACIÓN</h2>
+    <p>¿ESTÁS SEGURO DE QUE QUIERES ELIMINAR ESTE AGENTE?</p>
+    <div class="yo-btn-row">
+      <button class="yo-secondary" onclick="closeYoModal('yoDeleteModal')">CANCELAR</button>
+      <button class="yo-danger" onclick="confirmDeleteAgent()">ELIMINAR</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const SHEET_URLS = {
   casos: 'https://docs.google.com/spreadsheets/d/1UggxnFhR_qOjQTvCJB7kMUSJHyTr2S4WpBT7wNM2pzc/edit?usp=sharing',
@@ -205,5 +319,246 @@ function openOriginalSheet(type){if(!requireAuth())return;const url=SHEET_URLS[t
 function openSheet(type){if(!requireAuth())return;showPage(type);loadSheet(type)}
 function showComm(id){if(!requireAuth())return;document.querySelectorAll('.comm-panel').forEach(p=>p.style.display='none');const panel=document.getElementById(id);if(panel)panel.style.display='block';if(id==='avisos')loadSheet('avisos')}
 document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+
+/* ===================== SISTEMA "YO" (nuevo) ===================== */
+const DIRECTOR_PASSWORD = 'DIRECTOR2026'; // contraseña provisional del Director — cámbiala aquí
+const AGENTS_STORAGE_KEY = 'agencia_secret_agents';
+let yoPendingDeleteId = null;
+
+function getAgents(){
+  try{
+    const raw = localStorage.getItem(AGENTS_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveAgents(list){
+  localStorage.setItem(AGENTS_STORAGE_KEY, JSON.stringify(list));
+}
+function esc(v){
+  if(v===undefined||v===null||v==='') return '—';
+  return String(v).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+}
+
+function openYoLogin(){
+  document.getElementById('yoPasswordInput').value='';
+  document.getElementById('yoLoginError').textContent='';
+  document.getElementById('yoLoginModal').classList.add('show');
+  setTimeout(()=>document.getElementById('yoPasswordInput').focus(),50);
+}
+function closeYoModal(id){
+  document.getElementById(id).classList.remove('show');
+}
+
+function yoAccess(){
+  const pass = document.getElementById('yoPasswordInput').value;
+  const errorEl = document.getElementById('yoLoginError');
+  if(!pass){ errorEl.textContent='Introduce una contraseña.'; return; }
+
+  if(pass === DIRECTOR_PASSWORD){
+    closeYoModal('yoLoginModal');
+    renderDirectorProfile();
+    document.getElementById('yoProfileModal').classList.add('show');
+    return;
+  }
+
+  const agents = getAgents();
+  const found = agents.find(a=>a.password===pass);
+  if(found){
+    found.ultimoAcceso = new Date().toLocaleString('es-ES');
+    saveAgents(agents);
+    closeYoModal('yoLoginModal');
+    renderAgentProfile(found);
+    document.getElementById('yoProfileModal').classList.add('show');
+    return;
+  }
+
+  errorEl.textContent='Contraseña incorrecta. Acceso denegado.';
+}
+
+function yoLogout(){
+  closeYoModal('yoProfileModal');
+}
+
+function renderAgentProfile(agent){
+  const html = `
+    <span class="tag">PERFIL PERSONAL</span>
+    <h2>🪪 ${esc(agent.nombre)}</h2>
+    <div class="yo-profile-row"><b>Número de agente</b><span>${esc(agent.numero)}</span></div>
+    <div class="yo-profile-row"><b>Nombre completo</b><span>${esc(agent.nombre)}</span></div>
+    <div class="yo-profile-row"><b>Alias / código operativo</b><span>${esc(agent.alias)}</span></div>
+    <div class="yo-profile-row"><b>Fecha de incorporación</b><span>${esc(agent.fecha)}</span></div>
+    <div class="yo-profile-row"><b>Estado</b><span>${esc(agent.estado)}</span></div>
+    <div class="yo-profile-row"><b>Rango</b><span>${esc(agent.rango)}</span></div>
+    <div class="yo-profile-row"><b>Nivel de autorización</b><span>${esc(agent.nivel)}</span></div>
+    <div class="yo-profile-row"><b>Unidad</b><span>${esc(agent.unidad)}</span></div>
+    <div class="yo-profile-row"><b>Especialidad</b><span>${esc(agent.especialidad)}</span></div>
+    <div class="yo-profile-row"><b>Zona asignada</b><span>${esc(agent.zona)}</span></div>
+    <div class="yo-profile-row"><b>Supervisor</b><span>${esc(agent.supervisor)}</span></div>
+
+    <div class="yo-section-title">Actividad del agente</div>
+    <div class="yo-stats">
+      <div class="yo-stat"><b>${esc(agent.casos ?? 0)}</b><span>Casos asignados</span></div>
+      <div class="yo-stat"><b>${esc(agent.pistas ?? 0)}</b><span>Pistas registradas</span></div>
+      <div class="yo-stat"><b>${esc(agent.expedientes ?? 0)}</b><span>Expedientes consultados</span></div>
+    </div>
+    <div class="yo-profile-row"><b>Último acceso</b><span>${esc(agent.ultimoAcceso)}</span></div>
+    <div class="yo-profile-row"><b>Estado de la cuenta</b><span>${esc(agent.estado)}</span></div>
+  `;
+  document.getElementById('yoProfileContent').innerHTML = html;
+}
+
+function renderDirectorProfile(){
+  const agents = getAgents();
+  const activos = agents.filter(a=>(a.estado||'').toLowerCase().includes('activ')).length;
+
+  let rows = agents.map(a=>`
+    <div class="yo-agent-row" id="yoAgentRow_${a.id}">
+      <div><b>${esc(a.numero)}</b> — ${esc(a.nombre)}</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="yo-pass" id="yoPass_${a.id}">••••••••</span>
+        <button class="yo-show-btn" onclick="toggleAgentPassword('${a.id}')">MOSTRAR</button>
+        <button class="yo-edit-btn" onclick="openEditAgent('${a.id}')">EDITAR</button>
+        <button class="yo-del-btn" onclick="askDeleteAgent('${a.id}')">ELIMINAR</button>
+      </div>
+    </div>`).join('') || '<p style="color:#68747b">No hay agentes registrados todavía.</p>';
+
+  const html = `
+    <span class="tag">DIRECCIÓN</span>
+    <h2>🎖️ DIRECTOR DE LA AGENCIA</h2>
+    <div class="yo-profile-row"><b>Cargo</b><span>Director</span></div>
+    <div class="yo-profile-row"><b>Nivel de autorización</b><span>MÁXIMO</span></div>
+
+    <div class="yo-section-title">Panel del Director</div>
+    <div class="yo-stats">
+      <div class="yo-stat"><b>${agents.length}</b><span>Total de agentes</span></div>
+      <div class="yo-stat"><b>${activos}</b><span>Agentes activos</span></div>
+      <div class="yo-stat"><b>OPERATIVO</b><span>Estado del sistema</span></div>
+    </div>
+
+    <div class="yo-section-title">Contraseñas de agentes / Gestión</div>
+    <button class="yo-primary" style="margin-bottom:10px" onclick="openAddAgent()">＋ AÑADIR AGENTE</button>
+    <div id="yoAgentsList">${rows}</div>
+  `;
+  document.getElementById('yoProfileContent').innerHTML = html;
+}
+
+function toggleAgentPassword(id){
+  const agents = getAgents();
+  const agent = agents.find(a=>a.id===id);
+  if(!agent) return;
+  const el = document.getElementById('yoPass_'+id);
+  if(el.textContent==='••••••••'){ el.textContent = agent.password; }
+  else{ el.textContent = '••••••••'; }
+}
+
+function clearAgentForm(){
+  ['fNumero','fNombre','fAlias','fFecha','fEstado','fRango','fNivel','fUnidad','fEspecialidad','fZona','fSupervisor','fPassword'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fCasos').value=0;
+  document.getElementById('fPistas').value=0;
+  document.getElementById('fExpedientes').value=0;
+  document.getElementById('fEditingId').value='';
+  document.getElementById('yoAgentFormError').textContent='';
+}
+
+function openAddAgent(){
+  clearAgentForm();
+  document.getElementById('yoAgentFormTitle').textContent='＋ AÑADIR AGENTE';
+  document.getElementById('yoAgentFormModal').classList.add('show');
+}
+
+function openEditAgent(id){
+  const agents = getAgents();
+  const a = agents.find(x=>x.id===id);
+  if(!a) return;
+  clearAgentForm();
+  document.getElementById('yoAgentFormTitle').textContent='EDITAR AGENTE';
+  document.getElementById('fNumero').value=a.numero||'';
+  document.getElementById('fNombre').value=a.nombre||'';
+  document.getElementById('fAlias').value=a.alias||'';
+  document.getElementById('fFecha').value=a.fecha||'';
+  document.getElementById('fEstado').value=a.estado||'';
+  document.getElementById('fRango').value=a.rango||'';
+  document.getElementById('fNivel').value=a.nivel||'';
+  document.getElementById('fUnidad').value=a.unidad||'';
+  document.getElementById('fEspecialidad').value=a.especialidad||'';
+  document.getElementById('fZona').value=a.zona||'';
+  document.getElementById('fSupervisor').value=a.supervisor||'';
+  document.getElementById('fPassword').value=a.password||'';
+  document.getElementById('fCasos').value=a.casos ?? 0;
+  document.getElementById('fPistas').value=a.pistas ?? 0;
+  document.getElementById('fExpedientes').value=a.expedientes ?? 0;
+  document.getElementById('fEditingId').value=id;
+  document.getElementById('yoAgentFormModal').classList.add('show');
+}
+
+function saveAgentForm(){
+  const errorEl = document.getElementById('yoAgentFormError');
+  errorEl.textContent='';
+
+  const numero = document.getElementById('fNumero').value.trim();
+  const nombre = document.getElementById('fNombre').value.trim();
+  const password = document.getElementById('fPassword').value;
+  const editingId = document.getElementById('fEditingId').value;
+
+  if(!numero || !nombre || !password){
+    errorEl.textContent='Los campos Número de agente, Nombre completo y Contraseña son obligatorios.';
+    return;
+  }
+  if(password === DIRECTOR_PASSWORD){
+    errorEl.textContent='La contraseña del agente no puede coincidir con la del Director.';
+    return;
+  }
+
+  const agents = getAgents();
+  const dupNumero = agents.find(a=>a.numero===numero && a.id!==editingId);
+  if(dupNumero){ errorEl.textContent='Ya existe un agente con ese número.'; return; }
+  const dupPass = agents.find(a=>a.password===password && a.id!==editingId);
+  if(dupPass){ errorEl.textContent='Ya existe un agente con esa contraseña.'; return; }
+
+  const data = {
+    numero, nombre,
+    alias: document.getElementById('fAlias').value.trim(),
+    fecha: document.getElementById('fFecha').value,
+    estado: document.getElementById('fEstado').value.trim(),
+    rango: document.getElementById('fRango').value.trim(),
+    nivel: document.getElementById('fNivel').value.trim(),
+    unidad: document.getElementById('fUnidad').value.trim(),
+    especialidad: document.getElementById('fEspecialidad').value.trim(),
+    zona: document.getElementById('fZona').value.trim(),
+    supervisor: document.getElementById('fSupervisor').value.trim(),
+    password,
+    casos: Number(document.getElementById('fCasos').value)||0,
+    pistas: Number(document.getElementById('fPistas').value)||0,
+    expedientes: Number(document.getElementById('fExpedientes').value)||0
+  };
+
+  if(editingId){
+    const idx = agents.findIndex(a=>a.id===editingId);
+    if(idx>-1){ agents[idx] = {...agents[idx], ...data}; }
+  } else {
+    data.id = 'ag_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
+    data.ultimoAcceso = '—';
+    agents.push(data);
+  }
+
+  saveAgents(agents);
+  closeYoModal('yoAgentFormModal');
+  renderDirectorProfile();
+}
+
+function askDeleteAgent(id){
+  yoPendingDeleteId = id;
+  document.getElementById('yoDeleteModal').classList.add('show');
+}
+function confirmDeleteAgent(){
+  if(!yoPendingDeleteId) return;
+  const agents = getAgents().filter(a=>a.id!==yoPendingDeleteId);
+  saveAgents(agents);
+  yoPendingDeleteId = null;
+  closeYoModal('yoDeleteModal');
+  renderDirectorProfile();
+}
+
+document.getElementById('yoPasswordInput').addEventListener('keydown', e=>{ if(e.key==='Enter') yoAccess(); });
 </script>
 </body></html>
