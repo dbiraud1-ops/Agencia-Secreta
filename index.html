@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="ca">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Agencia Secreta</title>
@@ -70,10 +70,22 @@ input,select{border:1px solid var(--line);border-radius:6px;font-size:14px}
 .yo-stat b{display:block;font-size:18px;color:var(--blue)}
 .yo-stat span{font-size:12px;color:#58666e}
 @media(max-width:600px){.yo-field-grid{grid-template-columns:1fr}#yoBtn{top:10px;left:10px;padding:8px 12px;font-size:13px}}
+
+/* ===================== SELECTOR DE IDIOMA ===================== */
+.lang-switcher{position:fixed;top:14px;right:14px;z-index:70;display:flex;gap:5px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px;box-shadow:0 4px 14px #0003}
+.lang-switcher button{border:0;background:transparent;color:var(--dark);border-radius:6px;padding:7px 9px;cursor:pointer;font-weight:bold;font-size:12px;display:flex;align-items:center;gap:5px}
+.lang-switcher button.active{background:var(--blue);color:#fff}
+.cat-flag{width:18px;height:12px;border-radius:2px;display:inline-block;background:repeating-linear-gradient(to bottom,#f5c400 0 2px,#d32f2f 2px 4px);box-shadow:0 0 0 1px #bbb}
+@media(max-width:600px){.lang-switcher{top:10px;right:10px}.lang-switcher button{padding:6px 7px;font-size:11px}}
 </style>
 </head>
 <body>
 <button id="yoBtn" onclick="openYoLogin()">YO</button>
+<div id="langSwitcher" class="lang-switcher" aria-label="Selector d'idioma">
+  <button id="langCA" class="active" onclick="setLanguage('ca')"><span class="cat-flag"></span>CAT</button>
+  <button id="langES" onclick="setLanguage('es')"><span>🇪🇸</span>ES</button>
+</div>
+
 
 <header><h1>AGENCIA SECRETA</h1><p>PORTAL INTERNO DE INVESTIGACIÓN</p></header>
 <nav id="mainNav" class="hidden">
@@ -560,5 +572,84 @@ function confirmDeleteAgent(){
 }
 
 document.getElementById('yoPasswordInput').addEventListener('keydown', e=>{ if(e.key==='Enter') yoAccess(); });
+
+/* ===================== IDIOMES: CATALÀ / ESPANYOL ===================== */
+const TRANSLATIONS = {
+  "es": {
+    "AGENCIA SECRETA":"AGENCIA SECRETA",
+    "PORTAL INTERNO DE INVESTIGACIÓN":"PORTAL INTERNO DE INVESTIGACIÓN",
+    "Centro del Agente":"Centro del Agente","Casos":"Casos","Comunicaciones":"Comunicaciones","Agentes":"Agentes","Expedientes":"Expedientes","Base de pistas":"Base de pistas","Cerrar sesión":"Cerrar sesión",
+    "BIENVENIDO A LA AGENCIA":"BIENVENIDO A LA AGENCIA","Para continuar, debes identificarte para acceder al portal interno.":"Para continuar, debes identificarte para acceder al portal interno.","Contraseña de acceso":"Contraseña de acceso","IDENTIFICARSE":"IDENTIFICARSE","✓ ACCESO AUTORIZADO":"✓ ACCESO AUTORIZADO","Sistema de acceso interno · Agencia Secreta":"Sistema de acceso interno · Agencia Secreta",
+    "ACCESO AUTORIZADO":"ACCESO AUTORIZADO","Panel de situación interna de la Agencia.":"Panel de situación interna de la Agencia.","ACTIVIDAD DE LA AGENCIA":"ACTIVIDAD DE LA AGENCIA","Resumen operativo · Datos ficticios":"Resumen operativo · Datos ficticios","CASOS":"CASOS","PISTAS":"PISTAS","AGENTES":"AGENTES","COMUNIC.":"COMUNIC.","CASOS ABIERTOS · 12":"CASOS ABIERTOS · 12","PISTAS EN ANÁLISIS · 27":"PISTAS EN ANÁLISIS · 27","AGENTES ACTIVOS · 8":"AGENTES ACTIVOS · 8","COMUNICACIONES · 43":"COMUNICACIONES · 43","ESTADO OPERATIVO":"ESTADO OPERATIVO","Red interna":"Red interna","ACTIVA":"ACTIVA","Sistema de comunicaciones":"Sistema de comunicaciones","OPERATIVO":"OPERATIVO","Base de datos":"Base de datos","ACTUALIZADA":"ACTUALIZADA",
+    "Expedientes":"Expedientes","CONFIDENCIAL":"CONFIDENCIAL","RESTRINGIDO":"RESTRINGIDO","← Volver":"← Volver","Base de pistas":"Base de pistas","Registro interno de pistas encontradas durante las investigaciones.":"Registro interno de pistas encontradas durante las investigaciones.",
+    "📁 Casos":"📁 Casos","Registro centralizado de investigaciones de la Agencia.":"Registro centralizado de investigaciones de la Agencia.","La hoja se muestra directamente aquí. ":"La hoja se muestra directamente aquí. ","Doble clic":"Doble clic"," sobre la hoja para abrir Google Sheets.":" sobre la hoja para abrir Google Sheets.",
+    "📡 Comunicaciones":"📡 Comunicaciones","Centro interno de comunicaciones de la Agencia.":"Centro interno de comunicaciones de la Agencia.","☎️ Guía telefónica":"☎️ Guía telefónica","Guía de marcación rápida y comunicaciones internas.":"Guía de marcación rápida y comunicaciones internas.","📢 Avisos de la Agencia":"📢 Avisos de la Agencia","Hoja de avisos de la Agencia.":"Hoja de avisos de la Agencia.",
+    "GUÍA DE MARCACIÓN RÁPIDA":"GUÍA DE MARCACIÓN RÁPIDA","AGENCIA CENTRAL DE INVESTIGACIÓN":"AGENCIA CENTRAL DE INVESTIGACIÓN","SISTEMA DE COMUNICACIONES INTERNAS":"SISTEMA DE COMUNICACIONES INTERNAS","MARCACIÓN DIRECTA":"MARCACIÓN DIRECTA","Máxima autoridad de la Agencia":"Máxima autoridad de la Agencia","Supervisión general de operaciones":"Supervisión general de operaciones","Sistemas y tecnología":"Sistemas y tecnología","Operador principal de la agencia":"Operador principal de la agencia","Ordenadores, sistemas y tecnología":"Ordenadores, sistemas y tecnología","Radios, teléfonos y comunicaciones":"Radios, teléfonos y comunicaciones","Expedientes y documentación":"Expedientes y documentación","Información sobre sospechosos y casos":"Información sobre sospechosos y casos","Misiones y coordinación de agentes":"Misiones y coordinación de agentes","Incidentes y protocolos de seguridad":"Incidentes y protocolos de seguridad","Pruebas y análisis":"Pruebas y análisis","Seguimientos y vigilancia":"Seguimientos y vigilancia","Localización y coordinación de agentes":"Localización y coordinación de agentes","Vehículos y desplazamientos":"Vehículos y desplazamientos","Situaciones urgentes":"Situaciones urgentes","Jefatura de la agencia":"Jefatura de la agencia","Investigaciones especiales":"Investigaciones especiales","Material de investigación":"Material de investigación","Registro y entrega de evidencias":"Registro y entrega de evidencias",
+    "ATAJOS DEL TERMINAL":"ATAJOS DEL TERMINAL","MENÚ PRINCIPAL":"MENÚ PRINCIPAL","ÚLTIMO CASO":"ÚLTIMO CASO","LISTA DE AGENTES":"LISTA DE AGENTES","LISTA DE SOSPECHOSOS":"LISTA DE SOSPECHOSOS","CASOS ABIERTOS":"CASOS ABIERTOS","MENSAJES":"MENSAJES","LOCALIZACIÓN DE AGENTES":"LOCALIZACIÓN DE AGENTES","BLOQUEAR TERMINAL":"BLOQUEAR TERMINAL","UNIDADES EXTERNAS":"UNIDADES EXTERNAS","POLICÍA LOCAL":"POLICÍA LOCAL","MOSSOS D'ESQUADRA":"MOSSOS D'ESQUADRA","GEO — UNIDAD DE ÉLITE":"GEO — UNIDAD DE ÉLITE","TEDAX — ANTIEXPLOSIVOS":"TEDAX — ANTIEXPLOSIVOS","ANTIDISTURBIOS":"ANTIDISTURBIOS","BOMBEROS":"BOMBEROS","UNIDAD CANINA":"UNIDAD CANINA","OPERACIONES":"OPERACIONES","SOLICITAR AGENTE":"SOLICITAR AGENTE","SOLICITAR VEHÍCULO":"SOLICITAR VEHÍCULO","SOLICITAR EQUIPO":"SOLICITAR EQUIPO","AISLAR ZONA":"AISLAR ZONA","PROTOCOLO ESPECIAL":"PROTOCOLO ESPECIAL","INICIAR OPERACIÓN":"INICIAR OPERACIÓN","FINALIZAR OPERACIÓN":"FINALIZAR OPERACIÓN","CONTACTAR CON CENTRAL":"CONTACTAR CON CENTRAL",
+    "AVISOS DE LA AGENCIA":"AVISOS DE LA AGENCIA","Hoja de Google Sheets conectada al portal · vista ampliada.":"Hoja de Google Sheets conectada al portal · vista ampliada.","👮 Agentes":"👮 Agentes","Directorio centralizado de agentes de la Agencia.":"Directorio centralizado de agentes de la Agencia.","Doble clic sobre la hoja para abrirla directamente en Google Sheets.":"Doble clic sobre la hoja para abrirla directamente en Google Sheets.",
+    "DOCUMENTO FICTICIO · AGENCIA DE INVESTIGACIÓN · NO ES UN PORTAL OFICIAL":"DOCUMENTO FICTICIO · AGENCIA DE INVESTIGACIÓN · NO ES UN PORTAL OFICIAL",
+    "IDENTIFICACIÓN — YO":"IDENTIFICACIÓN — YO","Introduce tu contraseña personal para acceder a tu perfil.":"Introduce tu contraseña personal para acceder a tu perfil.","CONTRASEÑA PERSONAL":"CONTRASEÑA PERSONAL","Contraseña personal":"Contraseña personal","CANCELAR":"CANCELAR","ACCEDER":"ACCEDER","PERFIL PERSONAL":"PERFIL PERSONAL","DIRECTOR DE LA AGENCIA":"DIRECTOR DE LA AGENCIA","DIRECCIÓN":"DIRECCIÓN","Cargo":"Cargo","Director":"Director","Nivel de autorización":"Nivel de autorización","MÁXIMO":"MÁXIMO","Panel del Director":"Panel del Director","Total de agentes":"Total de agentes","Agentes activos":"Agentes activos","Estado del sistema":"Estado del sistema","Contraseñas de agentes / Gestión":"Contraseñas de agentes / Gestión","＋ AÑADIR AGENTE":"＋ AÑADIR AGENTE","MOSTRAR":"MOSTRAR","EDITAR":"EDITAR","ELIMINAR":"ELIMINAR","EDITAR AGENTE":"EDITAR AGENTE","GUARDAR AGENTE":"GUARDAR AGENTE","IDENTIFICACIÓN":"IDENTIFICACIÓN","Número de agente *":"Número de agente *","Nombre completo *":"Nombre completo *","Nombre completo":"Nombre completo","Alias / código operativo":"Alias / código operativo","INFORMACIÓN":"INFORMACIÓN","Fecha de incorporación":"Fecha de incorporación","Estado":"Estado","Rango":"Rango","Unidad":"Unidad","Especialidad":"Especialidad","Zona asignada":"Zona asignada","Supervisor":"Supervisor","SEGURIDAD":"SEGURIDAD","ACTIVIDAD":"ACTIVIDAD","Casos asignados":"Casos asignados","Pistas registradas":"Pistas registradas","Expedientes consultados":"Expedientes consultados","Último acceso":"Último acceso","Estado de la cuenta":"Estado de la cuenta","⚠️ CONFIRMAR ELIMINACIÓN":"⚠️ CONFIRMAR ELIMINACIÓN","¿ESTÁS SEGURO DE QUE QUIERES ELIMINAR ESTE AGENTE?":"¿ESTÁS SEGURO DE QUE QUIERES ELIMINAR ESTE AGENTE?",
+    "Contraseña incorrecta. Acceso denegado.":"Contraseña incorrecta. Acceso denegado.","Introduce una contraseña.":"Introduce una contraseña.","Los campos Número de agente, Nombre completo y Contraseña son obligatorios.":"Los campos Número de agente, Nombre completo y Contraseña son obligatorios.","La contraseña del agente no puede coincidir con la del Director.":"La contraseña del agente no puede coincidir con la del Director.","Ya existe un agente con ese número.":"Ya existe un agente con ese número.","Ya existe un agente con esa contraseña.":"Ya existe un agente con esa contraseña."
+  },
+  "ca": {
+    "AGENCIA SECRETA":"AGÈNCIA SECRETA",
+    "PORTAL INTERNO DE INVESTIGACIÓN":"PORTAL INTERN D'INVESTIGACIÓ",
+    "Centro del Agente":"Centre de l'Agent","Casos":"Casos","Comunicaciones":"Comunicacions","Agentes":"Agents","Expedientes":"Expedients","Base de pistas":"Base de pistes","Cerrar sesión":"Tancar sessió",
+    "BIENVENIDO A LA AGENCIA":"BENVINGUT A L'AGÈNCIA","Para continuar, debes identificarte para acceder al portal interno.":"Per continuar, t'has d'identificar per accedir al portal intern.","Contraseña de acceso":"Contrasenya d'accés","IDENTIFICARSE":"IDENTIFICAR-SE","✓ ACCESO AUTORIZADO":"✓ ACCÉS AUTORITZAT","Sistema de acceso interno · Agencia Secreta":"Sistema d'accés intern · Agència Secreta",
+    "ACCESO AUTORIZADO":"ACCÉS AUTORITZAT","Panel de situación interna de la Agencia.":"Panell de situació interna de l'Agència.","ACTIVIDAD DE LA AGENCIA":"ACTIVITAT DE L'AGÈNCIA","Resumen operativo · Datos ficticios":"Resum operatiu · Dades fictícies","CASOS":"CASOS","PISTAS":"PISTES","AGENTES":"AGENTS","COMUNIC.":"COMUNIC.","CASOS ABIERTOS · 12":"CASOS OBERTS · 12","PISTAS EN ANÁLISIS · 27":"PISTES EN ANÀLISI · 27","AGENTES ACTIVOS · 8":"AGENTS ACTIUS · 8","COMUNICACIONES · 43":"COMUNICACIONS · 43","ESTADO OPERATIVO":"ESTAT OPERATIU","Red interna":"Xarxa interna","ACTIVA":"ACTIVA","Sistema de comunicaciones":"Sistema de comunicacions","OPERATIVO":"OPERATIU","Base de datos":"Base de dades","ACTUALIZADA":"ACTUALITZADA",
+    "Expedientes":"Expedients","CONFIDENCIAL":"CONFIDENCIAL","RESTRINGIDO":"RESTRINGIT","← Volver":"← Tornar","Base de pistas":"Base de pistes","Registro interno de pistas encontradas durante las investigaciones.":"Registre intern de pistes trobades durant les investigacions.",
+    "📁 Casos":"📁 Casos","Registro centralizado de investigaciones de la Agencia.":"Registre centralitzat de les investigacions de l'Agència.","La hoja se muestra directamente aquí. ":"El full es mostra directament aquí. ","Doble clic":"Doble clic"," sobre la hoja para abrir Google Sheets.":" sobre el full per obrir Google Sheets.",
+    "📡 Comunicaciones":"📡 Comunicacions","Centro interno de comunicaciones de la Agencia.":"Centre intern de comunicacions de l'Agència.","☎️ Guía telefónica":"☎️ Guia telefònica","Guía de marcación rápida y comunicaciones internas.":"Guia de marcació ràpida i comunicacions internes.","📢 Avisos de la Agencia":"📢 Avisos de l'Agència","Hoja de avisos de la Agencia.":"Full d'avisos de l'Agència.",
+    "GUÍA DE MARCACIÓN RÁPIDA":"GUIA DE MARCACIÓ RÀPIDA","AGENCIA CENTRAL DE INVESTIGACIÓN":"AGÈNCIA CENTRAL D'INVESTIGACIÓ","SISTEMA DE COMUNICACIONES INTERNAS":"SISTEMA DE COMUNICACIONS INTERNES","MARCACIÓN DIRECTA":"MARCACIÓ DIRECTA","Máxima autoridad de la Agencia":"Màxima autoritat de l'Agència","Supervisión general de operaciones":"Supervisió general d'operacions","Sistemas y tecnología":"Sistemes i tecnologia","Operador principal de la agencia":"Operador principal de l'agència","Ordenadores, sistemas y tecnología":"Ordinadors, sistemes i tecnologia","Radios, teléfonos y comunicaciones":"Ràdios, telèfons i comunicacions","Expedientes y documentación":"Expedients i documentació","Información sobre sospechosos y casos":"Informació sobre sospitosos i casos","Misiones y coordinación de agentes":"Missions i coordinació d'agents","Incidentes y protocolos de seguridad":"Incidents i protocols de seguretat","Pruebas y análisis":"Proves i anàlisi","Seguimientos y vigilancia":"Seguiments i vigilància","Localización y coordinación de agentes":"Localització i coordinació d'agents","Vehículos y desplazamientos":"Vehicles i desplaçaments","Situaciones urgentes":"Situacions urgents","Jefatura de la agencia":"Direcció de l'agència","Investigaciones especiales":"Investigacions especials","Material de investigación":"Material d'investigació","Registro y entrega de evidencias":"Registre i lliurament d'evidències",
+    "ATAJOS DEL TERMINAL":"DRECERES DEL TERMINAL","MENÚ PRINCIPAL":"MENÚ PRINCIPAL","ÚLTIMO CASO":"ÚLTIM CAS","LISTA DE AGENTES":"LLISTA D'AGENTS","LISTA DE SOSPECHOSOS":"LLISTA DE SOSPITOSOS","CASOS ABIERTOS":"CASOS OBERTS","MENSAJES":"MISSATGES","LOCALIZACIÓN DE AGENTES":"LOCALITZACIÓ D'AGENTS","BLOQUEAR TERMINAL":"BLOQUEJAR TERMINAL","UNIDADES EXTERNAS":"UNITATS EXTERNES","POLICÍA LOCAL":"POLICIA LOCAL","MOSSOS D'ESQUADRA":"MOSSOS D'ESQUADRA","GEO — UNIDAD DE ÉLITE":"GEO — UNITAT D'ELIT","TEDAX — ANTIEXPLOSIVOS":"TEDAX — ANTEXPLOSIUS","ANTIDISTURBIOS":"ANTIAVALOTS","BOMBEROS":"BOMBERS","UNIDAD CANINA":"UNITAT CANINA","OPERACIONES":"OPERACIONS","SOLICITAR AGENTE":"SOL·LICITAR AGENT","SOLICITAR VEHÍCULO":"SOL·LICITAR VEHICLE","SOLICITAR EQUIPO":"SOL·LICITAR EQUIP","AISLAR ZONA":"AÏLLAR ZONA","PROTOCOLO ESPECIAL":"PROTOCOL ESPECIAL","INICIAR OPERACIÓN":"INICIAR OPERACIÓ","FINALIZAR OPERACIÓN":"FINALITZAR OPERACIÓ","CONTACTAR CON CENTRAL":"CONTACTAR AMB CENTRAL",
+    "AVISOS DE LA AGENCIA":"AVISOS DE L'AGÈNCIA","Hoja de Google Sheets conectada al portal · vista ampliada.":"Full de Google Sheets connectat al portal · vista ampliada.","👮 Agentes":"👮 Agents","Directorio centralizado de agentes de la Agencia.":"Directori centralitzat d'agents de l'Agència.","Doble clic sobre la hoja para abrirla directamente en Google Sheets.":"Doble clic sobre el full per obrir-lo directament a Google Sheets.",
+    "DOCUMENTO FICTICIO · AGENCIA DE INVESTIGACIÓN · NO ES UN PORTAL OFICIAL":"DOCUMENT FICTICI · AGÈNCIA D'INVESTIGACIÓ · NO ÉS UN PORTAL OFICIAL",
+    "IDENTIFICACIÓN — YO":"IDENTIFICACIÓ — JO","Introduce tu contraseña personal para acceder a tu perfil.":"Introdueix la teva contrasenya personal per accedir al teu perfil.","CONTRASEÑA PERSONAL":"CONTRASENYA PERSONAL","Contraseña personal":"Contrasenya personal","CANCELAR":"CANCEL·LAR","ACCEDER":"ACCEDIR","PERFIL PERSONAL":"PERFIL PERSONAL","DIRECTOR DE LA AGENCIA":"DIRECTOR DE L'AGÈNCIA","DIRECCIÓN":"DIRECCIÓ","Cargo":"Càrrec","Director":"Director","Nivel de autorización":"Nivell d'autorització","MÁXIMO":"MÀXIM","Panel del Director":"Panell del Director","Total de agentes":"Total d'agents","Agentes activos":"Agents actius","Estado del sistema":"Estat del sistema","Contraseñas de agentes / Gestión":"Contrasenyes d'agents / Gestió","＋ AÑADIR AGENTE":"＋ AFEGIR AGENT","MOSTRAR":"MOSTRAR","EDITAR":"EDITAR","ELIMINAR":"ELIMINAR","EDITAR AGENTE":"EDITAR AGENT","GUARDAR AGENTE":"DESAR AGENT","IDENTIFICACIÓN":"IDENTIFICACIÓ","Número de agente *":"Número d'agent *","Nombre completo *":"Nom complet *","Nombre completo":"Nom complet","Alias / código operativo":"Àlies / codi operatiu","INFORMACIÓN":"INFORMACIÓ","Fecha de incorporación":"Data d'incorporació","Estado":"Estat","Rango":"Rang","Unidad":"Unitat","Especialidad":"Especialitat","Zona asignada":"Zona assignada","Supervisor":"Supervisor","SEGURIDAD":"SEGURETAT","ACTIVIDAD":"ACTIVITAT","Casos asignados":"Casos assignats","Pistas registradas":"Pistes registrades","Expedientes consultados":"Expedients consultats","Último acceso":"Últim accés","Estado de la cuenta":"Estat del compte","⚠️ CONFIRMAR ELIMINACIÓN":"⚠️ CONFIRMAR ELIMINACIÓ","¿ESTÁS SEGURO DE QUE QUIERES ELIMINAR ESTE AGENTE?":"ESTÀS SEGUR QUE VOLS ELIMINAR AQUEST AGENT?",
+    "Contraseña incorrecta. Acceso denegado.":"Contrasenya incorrecta. Accés denegat.","Introduce una contraseña.":"Introdueix una contrasenya.","Los campos Número de agente, Nombre completo y Contraseña son obligatorios.":"Els camps Número d'agent, Nom complet i Contrasenya són obligatoris.","La contraseña del agente no puede coincidir con la del Director.":"La contrasenya de l'agent no pot coincidir amb la del Director.","Ya existe un agente con ese número.":"Ja existeix un agent amb aquest número.","Ya existe un agente con esa contraseña.":"Ja existeix un agent amb aquesta contrasenya."
+  }
+};
+
+function translateNode(node, lang){
+  if(node.nodeType !== 3) return;
+  const original = node.nodeValue.trim();
+  if(!original) return;
+  const translated = TRANSLATIONS[lang][original];
+  if(translated !== undefined){
+    node.nodeValue = node.nodeValue.replace(original, translated);
+  }
+}
+
+function translatePage(lang){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('body *').forEach(el=>{
+    el.childNodes.forEach(n=>translateNode(n,lang));
+    if(el.placeholder){
+      const p=TRANSLATIONS[lang][el.placeholder];
+      if(p!==undefined) el.placeholder=p;
+    }
+    if(el.title){
+      const t=TRANSLATIONS[lang][el.title];
+      if(t!==undefined) el.title=t;
+    }
+  });
+  document.getElementById('langCA').classList.toggle('active',lang==='ca');
+  document.getElementById('langES').classList.toggle('active',lang==='es');
+}
+
+function setLanguage(lang){
+  localStorage.setItem('agencia_language',lang);
+  location.reload();
+}
+
+(function(){
+  const saved=localStorage.getItem('agencia_language') || 'ca';
+  if(saved==='ca'){
+    // The HTML starts in Spanish, so apply Catalan on first load.
+    window.addEventListener('DOMContentLoaded',()=>translatePage('ca'));
+  }else{
+    window.addEventListener('DOMContentLoaded',()=>translatePage('es'));
+  }
+})();
+
 </script>
 </body></html>
