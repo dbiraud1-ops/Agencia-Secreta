@@ -258,6 +258,24 @@ input,select{border:1px solid var(--line);border-radius:6px;font-size:14px}
   </div>
 </div>
 
+<div id="yoPasswordChangeModal" class="yo-modal">
+  <div class="yo-box">
+    <h2 id="yoPasswordChangeTitle">🔐 CAMBIAR CONTRASEÑA</h2>
+    <p id="yoPasswordChangeDescription" style="color:#58666e;font-size:14px"></p>
+    <label>CONTRASEÑA ACTUAL</label>
+    <input id="changeCurrentPassword" type="password" autocomplete="current-password">
+    <label>NUEVA CONTRASEÑA</label>
+    <input id="changeNewPassword" type="password" autocomplete="new-password">
+    <label>CONFIRMAR NUEVA CONTRASEÑA</label>
+    <input id="changeConfirmPassword" type="password" autocomplete="new-password">
+    <div id="yoPasswordChangeError" class="yo-error"></div>
+    <div class="yo-btn-row">
+      <button class="yo-secondary" onclick="closeYoModal('yoPasswordChangeModal')">CANCELAR</button>
+      <button class="yo-primary" onclick="savePasswordChange()">GUARDAR CAMBIOS</button>
+    </div>
+  </div>
+</div>
+
 <div id="yoAgentFormModal" class="yo-modal">
   <div class="yo-box wide">
     <h2 id="yoAgentFormTitle">＋ AÑADIR AGENTE</h2>
@@ -318,10 +336,18 @@ const SHEET_URLS = {
   avisos: 'https://docs.google.com/spreadsheets/d/1Hn_oprid9VGgd7w5jP654yWw31Ap3cRb6mxYA8kk3Vw/edit?usp=sharing',
   agentes: 'https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S1_zfnlGra0Rntruyr5yfxckNLI/edit?usp=sharing'
 };
-const AGENCIA_PASSWORD = 'agencia26'; let authenticated=false;
+const PORTAL_PASSWORD_STORAGE_KEY = 'agencia_portal_password';
+const DIRECTOR_PASSWORD_STORAGE_KEY = 'agencia_director_password';
+const DEFAULT_PORTAL_PASSWORD = 'agencia26';
+const DEFAULT_DIRECTOR_PASSWORD = 'directordb';
+let authenticated=false;
+function getPortalPassword(){ return localStorage.getItem(PORTAL_PASSWORD_STORAGE_KEY) || DEFAULT_PORTAL_PASSWORD; }
+function getDirectorPassword(){ return localStorage.getItem(DIRECTOR_PASSWORD_STORAGE_KEY) || DEFAULT_DIRECTOR_PASSWORD; }
+function setPortalPassword(password){ localStorage.setItem(PORTAL_PASSWORD_STORAGE_KEY,password); }
+function setDirectorPassword(password){ localStorage.setItem(DIRECTOR_PASSWORD_STORAGE_KEY,password); }
 
 function login(){const input=document.getElementById('loginPassword'),error=document.getElementById('loginError'),msg=document.getElementById('authorizedMessage');
-if(input.value===AGENCIA_PASSWORD){authenticated=true;error.textContent='';msg.classList.add('show');document.getElementById('authScreen').style.display='none';document.getElementById('protectedContent').style.display='block';document.getElementById('mainNav').classList.remove('hidden');showPage('inicio')}
+if(input.value===getPortalPassword()){authenticated=true;error.textContent='';msg.classList.add('show');document.getElementById('authScreen').style.display='none';document.getElementById('protectedContent').style.display='block';document.getElementById('mainNav').classList.remove('hidden');showPage('inicio')}
 else{msg.classList.remove('show');error.textContent='Contraseña incorrecta. Acceso denegado.';input.select()}}
 function logout(){authenticated=false;document.getElementById('protectedContent').style.display='none';document.getElementById('mainNav').classList.add('hidden');document.getElementById('authScreen').style.display='flex';document.getElementById('loginPassword').value='';document.getElementById('loginError').textContent='';document.getElementById('authorizedMessage').classList.remove('show')}
 function requireAuth(){if(!authenticated){document.getElementById('authScreen').style.display='flex';return false}return true}
@@ -333,7 +359,7 @@ function showComm(id){if(!requireAuth())return;document.querySelectorAll('.comm-
 document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 
 /* ===================== SISTEMA "YO" (nuevo) ===================== */
-const DIRECTOR_PASSWORD = 'directordb'; // contraseña provisional del Director — cámbiala aquí
+function getDirectorAuthPassword(){ return getDirectorPassword(); }
 const AGENTS_STORAGE_KEY = 'agencia_secret_agents';
 let yoPendingDeleteId = null;
 
@@ -366,7 +392,7 @@ function yoAccess(){
   const errorEl = document.getElementById('yoLoginError');
   if(!pass){ errorEl.textContent='Introduce una contraseña.'; return; }
 
-  if(pass === DIRECTOR_PASSWORD){
+  if(pass === getDirectorAuthPassword()){
     closeYoModal('yoLoginModal');
     renderDirectorProfile();
     document.getElementById('yoProfileModal').classList.add('show');
@@ -448,12 +474,81 @@ function renderDirectorProfile(){
       <div class="yo-stat"><b>OPERATIVO</b><span>Estado del sistema</span></div>
     </div>
 
+    <div class="yo-section-title">SEGURIDAD DEL DIRECTOR</div>
+    <div class="grid" style="margin-bottom:14px">
+      <div class="item" onclick="openDirectorPasswordModal()">
+        <b>🔐 Cambiar contraseña del Director</b>
+        <span>Modifica la contraseña utilizada para entrar en «YO» como Director.</span>
+      </div>
+      <div class="item" onclick="openPortalPasswordModal()">
+        <b>🖥️ Cambiar contraseña del Portal</b>
+        <span>Modifica la contraseña general necesaria para entrar al portal.</span>
+      </div>
+    </div>
+
     <div class="yo-section-title">Contraseñas de agentes / Gestión</div>
     <button class="yo-primary" style="margin-bottom:10px" onclick="openAddAgent()">＋ AÑADIR AGENTE</button>
     <div id="yoAgentsList">${rows}</div>
   `;
   document.getElementById('yoProfileContent').innerHTML = html;
   translatePage(localStorage.getItem('agencia_language') || 'ca');
+}
+
+let passwordChangeType = '';
+
+function openDirectorPasswordModal(){
+  passwordChangeType = 'director';
+  document.getElementById('yoPasswordChangeTitle').textContent='🔐 CAMBIAR CONTRASEÑA DEL DIRECTOR';
+  document.getElementById('yoPasswordChangeDescription').textContent='Esta contraseña se utiliza para acceder al perfil del Director desde «YO».';
+  resetPasswordChangeForm();
+  document.getElementById('yoPasswordChangeModal').classList.add('show');
+  setTimeout(()=>document.getElementById('changeCurrentPassword').focus(),50);
+}
+
+function openPortalPasswordModal(){
+  passwordChangeType = 'portal';
+  document.getElementById('yoPasswordChangeTitle').textContent='🖥️ CAMBIAR CONTRASEÑA DEL PORTAL';
+  document.getElementById('yoPasswordChangeDescription').textContent='Esta contraseña se utiliza para entrar al portal interno de la Agencia.';
+  resetPasswordChangeForm();
+  document.getElementById('yoPasswordChangeModal').classList.add('show');
+  setTimeout(()=>document.getElementById('changeCurrentPassword').focus(),50);
+}
+
+function resetPasswordChangeForm(){
+  document.getElementById('changeCurrentPassword').value='';
+  document.getElementById('changeNewPassword').value='';
+  document.getElementById('changeConfirmPassword').value='';
+  document.getElementById('yoPasswordChangeError').textContent='';
+}
+
+function savePasswordChange(){
+  const current=document.getElementById('changeCurrentPassword').value;
+  const next=document.getElementById('changeNewPassword').value;
+  const confirm=document.getElementById('changeConfirmPassword').value;
+  const error=document.getElementById('yoPasswordChangeError');
+  const currentExpected=passwordChangeType==='director' ? getDirectorPassword() : getPortalPassword();
+
+  error.textContent='';
+  if(!current || !next || !confirm){
+    error.textContent='Todos los campos son obligatorios.';
+    return;
+  }
+  if(current!==currentExpected){
+    error.textContent='La contraseña actual no es correcta.';
+    return;
+  }
+  if(next.length<4){
+    error.textContent='La nueva contraseña debe tener al menos 4 caracteres.';
+    return;
+  }
+  if(next!==confirm){
+    error.textContent='Las nuevas contraseñas no coinciden.';
+    return;
+  }
+  if(passwordChangeType==='director') setDirectorPassword(next);
+  else setPortalPassword(next);
+  closeYoModal('yoPasswordChangeModal');
+  renderDirectorProfile();
 }
 
 function toggleAgentPassword(id){
@@ -518,7 +613,7 @@ function saveAgentForm(){
     errorEl.textContent='Los campos Número de agente, Nombre completo y Contraseña son obligatorios.';
     return;
   }
-  if(password === DIRECTOR_PASSWORD){
+  if(password === getDirectorAuthPassword()){
     errorEl.textContent='La contraseña del agente no puede coincidir con la del Director.';
     return;
   }
@@ -591,7 +686,7 @@ const TRANSLATIONS = {
     "AVISOS DE LA AGENCIA":"AVISOS DE LA AGENCIA","Hoja de Google Sheets conectada al portal · vista ampliada.":"Hoja de Google Sheets conectada al portal · vista ampliada.","👮 Agentes":"👮 Agentes","Directorio centralizado de agentes de la Agencia.":"Directorio centralizado de agentes de la Agencia.","Doble clic sobre la hoja para abrirla directamente en Google Sheets.":"Doble clic sobre la hoja para abrirla directamente en Google Sheets.",
     "DOCUMENTO FICTICIO · AGENCIA DE INVESTIGACIÓN · NO ES UN PORTAL OFICIAL":"DOCUMENTO FICTICIO · AGENCIA DE INVESTIGACIÓN · NO ES UN PORTAL OFICIAL",
     "IDENTIFICACIÓN — YO":"IDENTIFICACIÓN — YO","Introduce tu contraseña personal para acceder a tu perfil.":"Introduce tu contraseña personal para acceder a tu perfil.","CONTRASEÑA PERSONAL":"CONTRASEÑA PERSONAL","Contraseña personal":"Contraseña personal","CANCELAR":"CANCELAR","ACCEDER":"ACCEDER","PERFIL PERSONAL":"PERFIL PERSONAL","DIRECTOR DE LA AGENCIA":"DIRECTOR DE LA AGENCIA","DIRECCIÓN":"DIRECCIÓN","Cargo":"Cargo","Director":"Director","Nivel de autorización":"Nivel de autorización","MÁXIMO":"MÁXIMO","Panel del Director":"Panel del Director","Total de agentes":"Total de agentes","Agentes activos":"Agentes activos","Estado del sistema":"Estado del sistema","Contraseñas de agentes / Gestión":"Contraseñas de agentes / Gestión","＋ AÑADIR AGENTE":"＋ AÑADIR AGENTE","MOSTRAR":"MOSTRAR","EDITAR":"EDITAR","ELIMINAR":"ELIMINAR","EDITAR AGENTE":"EDITAR AGENTE","GUARDAR AGENTE":"GUARDAR AGENTE","IDENTIFICACIÓN":"IDENTIFICACIÓN","Número de agente *":"Número de agente *","Nombre completo *":"Nombre completo *","Nombre completo":"Nombre completo","Alias / código operativo":"Alias / código operativo","INFORMACIÓN":"INFORMACIÓN","Fecha de incorporación":"Fecha de incorporación","Estado":"Estado","Rango":"Rango","Unidad":"Unidad","Especialidad":"Especialidad","Zona asignada":"Zona asignada","Supervisor":"Supervisor","SEGURIDAD":"SEGURIDAD","ACTIVIDAD":"ACTIVIDAD","Casos asignados":"Casos asignados","Pistas registradas":"Pistas registradas","Expedientes consultados":"Expedientes consultados","Último acceso":"Último acceso","Estado de la cuenta":"Estado de la cuenta","⚠️ CONFIRMAR ELIMINACIÓN":"⚠️ CONFIRMAR ELIMINACIÓN","¿ESTÁS SEGURO DE QUE QUIERES ELIMINAR ESTE AGENTE?":"¿ESTÁS SEGURO DE QUE QUIERES ELIMINAR ESTE AGENTE?",
-    "Contraseña incorrecta. Acceso denegado.":"Contraseña incorrecta. Acceso denegado.","Introduce una contraseña.":"Introduce una contraseña.","Los campos Número de agente, Nombre completo y Contraseña son obligatorios.":"Los campos Número de agente, Nombre completo y Contraseña son obligatorios.","La contraseña del agente no puede coincidir con la del Director.":"La contraseña del agente no puede coincidir con la del Director.","Ya existe un agente con ese número.":"Ya existe un agente con ese número.","Ya existe un agente con esa contraseña.":"Ya existe un agente con esa contraseña."
+    "SEGURIDAD DEL DIRECTOR":"SEGURIDAD DEL DIRECTOR","Cambiar contraseña del Director":"Cambiar contraseña del Director","Modifica la contraseña utilizada para entrar en «YO» como Director.":"Modifica la contraseña utilizada para entrar en «YO» como Director.","Cambiar contraseña del Portal":"Cambiar contraseña del Portal","Modifica la contraseña general necesaria para entrar al portal.":"Modifica la contraseña general necesaria para entrar al portal.","CAMBIAR CONTRASEÑA":"CAMBIAR CONTRASEÑA","CAMBIAR CONTRASEÑA DEL DIRECTOR":"CAMBIAR CONTRASEÑA DEL DIRECTOR","CAMBIAR CONTRASEÑA DEL PORTAL":"CAMBIAR CONTRASEÑA DEL PORTAL","Esta contraseña se utiliza para acceder al perfil del Director desde «YO».":"Esta contraseña se utiliza para acceder al perfil del Director desde «YO».","Esta contraseña se utiliza para entrar al portal interno de la Agencia.":"Esta contraseña se utiliza para entrar al portal interno de la Agencia.","CONTRASEÑA ACTUAL":"CONTRASEÑA ACTUAL","NUEVA CONTRASEÑA":"NUEVA CONTRASEÑA","CONFIRMAR NUEVA CONTRASEÑA":"CONFIRMAR NUEVA CONTRASEÑA","GUARDAR CAMBIOS":"GUARDAR CAMBIOS","Todos los campos son obligatorios.":"Todos los campos son obligatorios.","La contraseña actual no es correcta.":"La contraseña actual no es correcta.","La nueva contraseña debe tener al menos 4 caracteres.":"La nueva contraseña debe tener al menos 4 caracteres.","Las nuevas contraseñas no coinciden.":"Las nuevas contraseñas no coinciden.","Contraseña incorrecta. Acceso denegado.":"Contraseña incorrecta. Acceso denegado.","Introduce una contraseña.":"Introduce una contraseña.","Los campos Número de agente, Nombre completo y Contraseña son obligatorios.":"Los campos Número de agente, Nombre completo y Contraseña son obligatorios.","La contraseña del agente no puede coincidir con la del Director.":"La contraseña del agente no puede coincidir con la del Director.","Ya existe un agente con ese número.":"Ya existe un agente con ese número.","Ya existe un agente con esa contraseña.":"Ya existe un agente con esa contraseña."
   },
   "ca": {
     "AGENCIA SECRETA":"AGÈNCIA SECRETA",
@@ -607,7 +702,7 @@ const TRANSLATIONS = {
     "AVISOS DE LA AGENCIA":"AVISOS DE L'AGÈNCIA","Hoja de Google Sheets conectada al portal · vista ampliada.":"Full de Google Sheets connectat al portal · vista ampliada.","👮 Agentes":"👮 Agents","Directorio centralizado de agentes de la Agencia.":"Directori centralitzat d'agents de l'Agència.","Doble clic sobre la hoja para abrirla directamente en Google Sheets.":"Doble clic sobre el full per obrir-lo directament a Google Sheets.",
     "DOCUMENTO FICTICIO · AGENCIA DE INVESTIGACIÓN · NO ES UN PORTAL OFICIAL":"DOCUMENT FICTICI · AGÈNCIA D'INVESTIGACIÓ · NO ÉS UN PORTAL OFICIAL",
     "IDENTIFICACIÓN — YO":"IDENTIFICACIÓ — JO","Introduce tu contraseña personal para acceder a tu perfil.":"Introdueix la teva contrasenya personal per accedir al teu perfil.","CONTRASEÑA PERSONAL":"CONTRASENYA PERSONAL","Contraseña personal":"Contrasenya personal","CANCELAR":"CANCEL·LAR","ACCEDER":"ACCEDIR","PERFIL PERSONAL":"PERFIL PERSONAL","DIRECTOR DE LA AGENCIA":"DIRECTOR DE L'AGÈNCIA","DIRECCIÓN":"DIRECCIÓ","Cargo":"Càrrec","Director":"Director","Nivel de autorización":"Nivell d'autorització","MÁXIMO":"MÀXIM","Panel del Director":"Panell del Director","Total de agentes":"Total d'agents","Agentes activos":"Agents actius","Estado del sistema":"Estat del sistema","Contraseñas de agentes / Gestión":"Contrasenyes d'agents / Gestió","＋ AÑADIR AGENTE":"＋ AFEGIR AGENT","MOSTRAR":"MOSTRAR","EDITAR":"EDITAR","ELIMINAR":"ELIMINAR","EDITAR AGENTE":"EDITAR AGENT","GUARDAR AGENTE":"DESAR AGENT","IDENTIFICACIÓN":"IDENTIFICACIÓ","Número de agente *":"Número d'agent *","Nombre completo *":"Nom complet *","Nombre completo":"Nom complet","Alias / código operativo":"Àlies / codi operatiu","INFORMACIÓN":"INFORMACIÓ","Fecha de incorporación":"Data d'incorporació","Estado":"Estat","Rango":"Rang","Unidad":"Unitat","Especialidad":"Especialitat","Zona asignada":"Zona assignada","Supervisor":"Supervisor","SEGURIDAD":"SEGURETAT","ACTIVIDAD":"ACTIVITAT","Casos asignados":"Casos assignats","Pistas registradas":"Pistes registrades","Expedientes consultados":"Expedients consultats","Último acceso":"Últim accés","Estado de la cuenta":"Estat del compte","⚠️ CONFIRMAR ELIMINACIÓN":"⚠️ CONFIRMAR ELIMINACIÓ","¿ESTÁS SEGURO DE QUE QUIERES ELIMINAR ESTE AGENTE?":"ESTÀS SEGUR QUE VOLS ELIMINAR AQUEST AGENT?",
-    "Contraseña incorrecta. Acceso denegado.":"Contrasenya incorrecta. Accés denegat.","Introduce una contraseña.":"Introdueix una contrasenya.","Los campos Número de agente, Nombre completo y Contraseña son obligatorios.":"Els camps Número d'agent, Nom complet i Contrasenya són obligatoris.","La contraseña del agente no puede coincidir con la del Director.":"La contrasenya de l'agent no pot coincidir amb la del Director.","Ya existe un agente con ese número.":"Ja existeix un agent amb aquest número.","Ya existe un agente con esa contraseña.":"Ja existeix un agent amb aquesta contrasenya."
+    "SEGURIDAD DEL DIRECTOR":"SEGURETAT DEL DIRECTOR","Cambiar contraseña del Director":"Canviar la contrasenya del Director","Modifica la contraseña utilizada para entrar en «YO» como Director.":"Modifica la contrasenya utilitzada per entrar al perfil del Director des de «JO».","Cambiar contraseña del Portal":"Canviar la contrasenya del Portal","Modifica la contraseña general necesaria para entrar al portal.":"Modifica la contrasenya general necessària per entrar al portal.","CAMBIAR CONTRASEÑA":"CANVIAR CONTRASENYA","CAMBIAR CONTRASEÑA DEL DIRECTOR":"CANVIAR CONTRASENYA DEL DIRECTOR","CAMBIAR CONTRASEÑA DEL PORTAL":"CANVIAR CONTRASENYA DEL PORTAL","Esta contraseña se utiliza para acceder al perfil del Director desde «YO».":"Aquesta contrasenya s'utilitza per accedir al perfil del Director des de «JO».","Esta contraseña se utiliza para entrar al portal interno de la Agencia.":"Aquesta contrasenya s'utilitza per entrar al portal intern de l'Agència.","CONTRASEÑA ACTUAL":"CONTRASENYA ACTUAL","NUEVA CONTRASEÑA":"NOVA CONTRASENYA","CONFIRMAR NUEVA CONTRASEÑA":"CONFIRMAR NOVA CONTRASENYA","GUARDAR CAMBIOS":"DESAR CANVIS","Todos los campos son obligatorios.":"Tots els camps són obligatoris.","La contraseña actual no es correcta.":"La contrasenya actual no és correcta.","La nueva contraseña debe tener al menos 4 caracteres.":"La nova contrasenya ha de tenir almenys 4 caràcters.","Las nuevas contraseñas no coinciden.":"Les noves contrasenyes no coincideixen.","Contraseña incorrecta. Acceso denegado.":"Contrasenya incorrecta. Accés denegat.","Introduce una contraseña.":"Introdueix una contrasenya.","Los campos Número de agente, Nombre completo y Contraseña son obligatorios.":"Els camps Número d'agent, Nom complet i Contrasenya són obligatoris.","La contraseña del agente no puede coincidir con la del Director.":"La contrasenya de l'agent no pot coincidir amb la del Director.","Ya existe un agente con ese número.":"Ja existeix un agent amb aquest número.","Ya existe un agente con esa contraseña.":"Ja existeix un agent amb aquesta contrasenya."
   }
 };
 
