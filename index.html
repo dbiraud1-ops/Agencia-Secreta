@@ -318,7 +318,7 @@ const SHEET_URLS = {
   avisos: 'https://docs.google.com/spreadsheets/d/1Hn_oprid9VGgd7w5jP654yWw31Ap3cRb6mxYA8kk3Vw/edit?usp=sharing',
   agentes: 'https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S1_zfnlGra0Rntruyr5yfxckNLI/edit?usp=sharing'
 };
-const AGENCIA_PASSWORD='AGENCIA2026'; let authenticated=false;
+const AGENCIA_PASSWORD = 'agencia26'; let authenticated=false;
 
 function login(){const input=document.getElementById('loginPassword'),error=document.getElementById('loginError'),msg=document.getElementById('authorizedMessage');
 if(input.value===AGENCIA_PASSWORD){authenticated=true;error.textContent='';msg.classList.add('show');document.getElementById('authScreen').style.display='none';document.getElementById('protectedContent').style.display='block';document.getElementById('mainNav').classList.remove('hidden');showPage('inicio')}
@@ -333,7 +333,7 @@ function showComm(id){if(!requireAuth())return;document.querySelectorAll('.comm-
 document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 
 /* ===================== SISTEMA "YO" (nuevo) ===================== */
-const DIRECTOR_PASSWORD = 'DIRECTOR2026'; // contraseña provisional del Director — cámbiala aquí
+const DIRECTOR_PASSWORD = 'directordb'; // contraseña provisional del Director — cámbiala aquí
 const AGENTS_STORAGE_KEY = 'agencia_secret_agents';
 let yoPendingDeleteId = null;
 
