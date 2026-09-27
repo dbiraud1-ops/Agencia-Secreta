@@ -417,6 +417,7 @@ function renderAgentProfile(agent){
     <div class="yo-profile-row"><b>Estado de la cuenta</b><span>${esc(agent.estado)}</span></div>
   `;
   document.getElementById('yoProfileContent').innerHTML = html;
+  translatePage(localStorage.getItem('agencia_language') || 'ca');
 }
 
 function renderDirectorProfile(){
@@ -452,6 +453,7 @@ function renderDirectorProfile(){
     <div id="yoAgentsList">${rows}</div>
   `;
   document.getElementById('yoProfileContent').innerHTML = html;
+  translatePage(localStorage.getItem('agencia_language') || 'ca');
 }
 
 function toggleAgentPassword(id){
