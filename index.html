@@ -244,6 +244,152 @@ footer{padding:30px 18px;letter-spacing:.6px}
   .sheet-frame{height:70vh;min-height:480px}
 }
 
+
+
+/* ===== INTERFAZ TÁCTICA / CENTRO DE OPERACIONES ===== */
+:root{
+  --tech-bg:#07111c;--tech-panel:#0c1b29;--tech-panel-hi:#11283a;
+  --tech-border:#24465b;--tech-cyan:#42d9ec;--tech-text:#e8f4f8;
+  --tech-muted:#8ca8b8;--tech-green:#57e0ae;
+}
+body{
+  background-color:var(--tech-bg);
+  background-image:
+    linear-gradient(rgba(54,139,164,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(54,139,164,.045) 1px,transparent 1px),
+    radial-gradient(ellipse at 50% -15%,rgba(0,158,190,.19),transparent 55%);
+  background-size:34px 34px,34px 34px,auto;
+}
+header{
+  min-height:166px;padding:48px 20px 32px;
+  background:linear-gradient(110deg,#071b2b 0%,#0b3449 48%,#081a2a 100%);
+  border-bottom:1px solid #28728a;
+}
+header:after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--tech-cyan),#237fa2,transparent);
+  box-shadow:0 0 18px #42d9ec88;
+}
+header h1{font-size:clamp(27px,4vw,42px);letter-spacing:.19em}
+header p{font-size:11px;letter-spacing:.25em;color:#9fcbd8}
+nav{border-bottom:1px solid #23465a;background:rgba(5,16,27,.96)}
+nav button{letter-spacing:.08em;text-transform:uppercase;font-size:10px}
+main{max-width:1500px}
+.card,.sheet-card,.auth-card,.modalbox,.yo-box{
+  background:linear-gradient(145deg,rgba(15,34,49,.98),rgba(8,22,34,.98));
+  border:1px solid var(--tech-border);
+  box-shadow:0 16px 45px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.025);
+  border-radius:13px;
+}
+.card h2,.sheet-card h2{font-size:clamp(20px,2.2vw,27px);letter-spacing:.035em}
+.card h2:after,.sheet-card h2:after{
+  content:"";display:block;width:56px;height:2px;margin-top:10px;
+  background:var(--tech-cyan);box-shadow:0 0 10px #42d9ec77;
+}
+.tag{border-radius:4px;text-transform:uppercase;font-size:10px;letter-spacing:.14em}
+.item{position:relative;overflow:hidden}
+.item:before{
+  content:"";position:absolute;top:0;left:0;width:3px;height:100%;
+  background:var(--tech-cyan);opacity:.7;
+}
+.item b{letter-spacing:.035em}
+.code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.04em}
+.ops-console{
+  margin:22px 0 24px;padding:0;border:1px solid #286078;border-radius:10px;
+  overflow:hidden;background:linear-gradient(115deg,#081a29,#0d2a3b 55%,#091a29);
+  box-shadow:inset 0 0 35px #0005,0 12px 28px #0003;
+}
+.ops-console-head,.ops-console-foot{
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:10px 15px;background:#071521;color:#8eb4c4;
+  font:700 10px ui-monospace,monospace;letter-spacing:.12em;
+}
+.ops-console-head{border-bottom:1px solid #21485b}
+.ops-console-main{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:#214357}
+.ops-console-main>div{padding:17px 14px;background:rgba(9,29,43,.96);min-width:0}
+.ops-console-main small,.ops-console-main strong{display:block}
+.ops-console-main small{font:10px ui-monospace,monospace;color:#7798aa;letter-spacing:.1em;margin-bottom:9px}
+.ops-console-main strong{font:700 12px ui-monospace,monospace;color:#c8edf4;letter-spacing:.035em}
+.ops-console-foot{border-top:1px solid #21485b;color:#65889a;font-size:9px}
+.live-dot{
+  display:inline-block;width:7px;height:7px;margin-right:7px;border-radius:50%;
+  background:var(--tech-green);box-shadow:0 0 9px #57e0ae;
+  vertical-align:middle;
+}
+#inicio .card>div[style*="background:#fafbfc"]{
+  background:linear-gradient(145deg,#0c2232,#0a1a28)!important;
+  border-color:#24465b!important;
+}
+#inicio .card>div[style*="background:#fafbfc"] h3{color:#73ddec!important;letter-spacing:.12em;font:700 12px ui-monospace,monospace}
+#inicio .card>div[style*="background:#fafbfc"] p{color:#8ca8b8!important}
+#inicio .card>div[style*="background:#fafbfc"] .code{
+  background:#071722;color:#7ce6f1;border:1px solid #1e4b60;
+}
+#inicio .card>div[style*="background:#fafbfc"] .card{
+  background:#0b1c2a;border-color:#24465b;
+}
+#inicio .card>div[style*="background:#fafbfc"] .card .row{border-color:#1f4053}
+#expedientes .row,#pistas .code{
+  background:linear-gradient(100deg,#10283a,#0b1d2b);
+  border:1px solid #24465b;border-radius:8px;
+  padding:15px 17px;margin:10px 0;color:#d6e8ef;
+}
+#expedientes .row b{color:#7de4ef;font-family:ui-monospace,monospace;letter-spacing:.04em}
+#expedientes .row span{font-size:10px;letter-spacing:.12em;color:#e9c879;border:1px solid #77633a;border-radius:4px;padding:4px 7px}
+#pistas .code{font-size:12px;line-height:1.6}
+.comm-commandbar{
+  display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;
+  padding:17px 19px;margin:20px 0 18px;border:1px solid #28536a;border-radius:9px;
+  background:linear-gradient(110deg,#0a1c2b,#103248);
+}
+.comm-commandbar>div:first-child b,.comm-commandbar small{display:block}
+.comm-commandbar>div:first-child b{font:700 12px ui-monospace,monospace;letter-spacing:.1em;color:#c8edf4}
+.comm-commandbar small{font:9px ui-monospace,monospace;color:#7898a9;margin:6px 0 0 15px;letter-spacing:.1em}
+.comm-command-status{display:flex;gap:8px;flex-wrap:wrap}
+.comm-command-status span{padding:7px 9px;border:1px solid #28536a;border-radius:5px;color:#89aaba;font:9px ui-monospace,monospace;letter-spacing:.06em}
+.comm-command-status b{color:#65e2b6;margin-left:4px}
+.phone-guide{
+  background:radial-gradient(ellipse at 50% 0%,#12364a,#07131e 65%);
+  border:1px solid #286078;
+}
+.phone-guide h3{font-family:ui-monospace,monospace;color:#75e5f0}
+.phone-list,.phone-box{
+  background:linear-gradient(145deg,#10283a,#0a1c2a);
+  border:1px solid #2a5064;border-radius:12px;
+}
+.phone-list>div{border-bottom:1px solid #1d3b4e}
+.phone-top>div{border:1px solid #3c7184;background:#0d2636}
+.yo-stats .yo-stat{position:relative;overflow:hidden}
+.yo-stats .yo-stat:after{
+  content:"";position:absolute;left:0;bottom:0;width:100%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--tech-cyan),transparent);
+}
+.yo-agent-row{border-radius:7px}
+.yo-section-title{font-family:ui-monospace,monospace;letter-spacing:.13em}
+.sheet-card .sheet-frame{min-height:500px}
+.auth-card{position:relative;overflow:hidden}
+.auth-card:before{
+  content:"AGENCIA // ACCESO RESTRINGIDO";display:block;
+  color:#6e9aaa;font:10px ui-monospace,monospace;letter-spacing:.16em;
+  padding-bottom:15px;border-bottom:1px solid #24465b;margin-bottom:20px;
+}
+footer{font:9px ui-monospace,monospace;letter-spacing:.12em}
+@media(max-width:850px){
+  .ops-console-main{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+  header{min-height:145px;padding-top:55px}
+  header h1{letter-spacing:.1em}
+  .ops-console-head,.ops-console-foot{font-size:8px}
+  .ops-console-main>div{padding:13px 10px}
+  .ops-console-main strong{font-size:10px}
+  .comm-command-status{width:100%}
+  .comm-command-status span{flex:1;text-align:center}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -275,6 +421,16 @@ footer{padding:30px 18px;letter-spacing:.6px}
 
 <main id="protectedContent" style="display:none">
 <section id="inicio" class="page active"><div class="card"><span class="tag">ACCESO AUTORIZADO</span><h2>Centro del Agente</h2><p>Panel de situación interna de la Agencia.</p>
+<div class="ops-console" aria-label="Consola de estado del sistema">
+  <div class="ops-console-head"><span><i class="live-dot"></i> SISTEMA CENTRAL</span><span>CANAL cifrado · ENTORNO FICTICIO</span></div>
+  <div class="ops-console-main">
+    <div><small>ESTADO DE RED</small><strong><i class="live-dot"></i> CONECTADA</strong></div>
+    <div><small>BASE DE DATOS</small><strong>ENLACE DISPONIBLE</strong></div>
+    <div><small>CONTROL DE ACCESO</small><strong>PROTEGIDO</strong></div>
+    <div><small>SESIÓN</small><strong>AGENTE AUTORIZADO</strong></div>
+  </div>
+  <div class="ops-console-foot"><span>SYS://AGENCIA/CENTRAL</span><span>MONITORIZACIÓN LOCAL ACTIVA</span></div>
+</div>
 <div style="margin-top:24px;border:1px solid var(--line);border-radius:10px;padding:20px;background:#fafbfc">
 <h3 style="margin-top:0;color:var(--blue)">📊 ACTIVIDAD DE LA AGENCIA</h3><p style="font-size:13px;color:#68747b">Resumen operativo · Datos ficticios</p>
 <div style="display:flex;align-items:flex-end;gap:18px;height:220px;padding:20px 10px 10px;border-bottom:2px solid var(--line)">
@@ -298,7 +454,11 @@ footer{padding:30px 18px;letter-spacing:.6px}
     <h2>📡 Comunicaciones</h2>
     <p>Centro interno de comunicaciones de la Agencia.</p>
 
-    <div class="grid" style="margin-top:20px">
+    <div class="comm-commandbar">
+  <div><span class="live-dot"></span><b>ENLACE DE COMUNICACIONES</b><small>RED INTERNA · ESTADO DE SERVICIO</small></div>
+  <div class="comm-command-status"><span>VOZ <b>LISTA</b></span><span>MENSAJERÍA <b>ACTIVA</b></span><span>ARCHIVO <b>EN LÍNEA</b></span></div>
+</div>
+<div class="grid" style="margin-top:20px">
       <div class="item" onclick="showComm('telefonica')">
         <b>☎️ Guía telefónica</b>
         <span>Guía de marcación rápida y comunicaciones internas.</span>
