@@ -390,6 +390,52 @@ footer{font:9px ui-monospace,monospace;letter-spacing:.12em}
   *,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
 
+
+/* ===== INTELLIGENCE MODULES REDESIGN ===== */
+.module-shell{position:relative;overflow:hidden;padding:clamp(18px,3vw,30px);border:1px solid rgba(67,210,239,.24);border-radius:18px;background:linear-gradient(145deg,rgba(10,27,43,.98),rgba(5,15,27,.98));box-shadow:0 18px 55px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.035)}
+.module-shell:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(rgba(66,200,232,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(66,200,232,.12) 1px,transparent 1px);background-size:32px 32px;mask-image:linear-gradient(to bottom,black,transparent 78%)}
+.module-head,.module-toolbar,.module-stats,.record-grid,.module-foot{position:relative;z-index:1}
+.module-head{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-bottom:22px;border-bottom:1px solid rgba(74,204,231,.2)}
+.module-head h2,.module-head h3{margin:7px 0;color:#e9fbff;letter-spacing:.09em;font-size:clamp(20px,3vw,29px)}
+.module-head p{color:#8ca9b9;margin:0}
+.eyebrow{font-size:10px;letter-spacing:.2em;color:#50d9ee;font-weight:800}
+.module-orb{width:76px;height:76px;flex:0 0 76px;display:grid;place-content:center;text-align:center;border-radius:50%;border:1px solid rgba(64,218,239,.65);box-shadow:0 0 25px rgba(27,192,224,.15),inset 0 0 20px rgba(27,192,224,.12);color:#71eaff;font-size:11px;font-weight:900;letter-spacing:.12em}
+.module-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+.module-stat{padding:14px 16px;border:1px solid rgba(76,191,220,.18);border-radius:12px;background:rgba(13,38,56,.72)}
+.module-stat b{display:block;color:#e8fbff;font-size:25px}.module-stat span{font-size:10px;letter-spacing:.12em;color:#81a3b5}
+.module-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0}
+.module-search,.module-toolbar select,.record-fields input,.record-fields select,.record-fields textarea{min-width:0;flex:1;padding:12px 14px;border:1px solid rgba(73,191,220,.3);border-radius:9px;background:#091a29;color:#e6faff;outline:none}
+.module-search:focus,.record-fields input:focus,.record-fields textarea:focus{border-color:#52dced;box-shadow:0 0 0 3px rgba(53,201,226,.1)}
+.module-toolbar select{flex:0 1 190px}
+.tech-btn{border:1px solid #38cce4;border-radius:9px;padding:12px 16px;background:linear-gradient(135deg,#0b7189,#10516e);color:#eaffff;font-weight:800;font-size:11px;letter-spacing:.08em;cursor:pointer;box-shadow:0 5px 18px rgba(0,177,213,.12);transition:.2s}
+.tech-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,199,226,.22);filter:brightness(1.12)}
+.tech-btn.secondary{background:transparent;border-color:rgba(133,175,194,.35);color:#9db8c6}
+.record-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:13px}
+.record-card{position:relative;padding:17px;border:1px solid rgba(70,181,210,.22);border-radius:13px;background:linear-gradient(145deg,rgba(15,43,62,.92),rgba(8,25,40,.96));transition:.2s;min-width:0}
+.record-card:hover{border-color:rgba(73,222,239,.65);transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.2)}
+.record-card:before{content:"";position:absolute;top:0;left:17px;right:17px;height:1px;background:linear-gradient(90deg,transparent,#49d9ed,transparent)}
+.record-code{color:#54d8ed;font-size:10px;font-weight:900;letter-spacing:.15em}
+.record-card h3{color:#eafaff;font-size:17px;margin:9px 0 7px}
+.record-card p{color:#91acba;font-size:12px;line-height:1.55;margin:5px 0}
+.record-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:13px;padding-top:11px;border-top:1px solid rgba(89,171,197,.15);font-size:10px;color:#82a4b4}
+.record-status{border:1px solid rgba(67,211,177,.3);border-radius:20px;padding:4px 8px;color:#69e2bf;background:rgba(27,157,125,.08);font-size:9px;letter-spacing:.08em}
+.record-buttons{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.record-buttons button{padding:7px 9px;border-radius:7px;border:1px solid rgba(82,193,218,.25);background:rgba(9,31,47,.8);color:#aeeefa;font-size:10px;cursor:pointer}
+.record-buttons button.danger{color:#ff9b9b;border-color:rgba(255,110,110,.3)}
+.module-empty{grid-column:1/-1;padding:30px;text-align:center;border:1px dashed rgba(80,186,211,.25);border-radius:12px;color:#82a5b5}
+.module-foot{display:flex;justify-content:space-between;gap:10px;margin-top:22px;padding-top:12px;border-top:1px solid rgba(77,181,210,.15);font-size:9px;letter-spacing:.12em;color:#67899a}.module-foot span{color:#55d8bc}
+.record-modal{display:none;position:fixed;z-index:10000;inset:0;padding:18px;background:rgba(1,8,15,.82);backdrop-filter:blur(9px);align-items:center;justify-content:center}
+.record-modal.show{display:flex}
+.record-dialog{width:min(720px,100%);max-height:90vh;overflow:auto;padding:24px;border:1px solid rgba(72,211,235,.45);border-radius:17px;background:linear-gradient(145deg,#0d263a,#071522);box-shadow:0 25px 90px rgba(0,0,0,.55)}
+.record-dialog-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.record-dialog-head h2{margin:6px 0;color:#eaffff;font-size:21px;letter-spacing:.08em}
+.record-close{border:0;background:transparent;color:#9bd9e6;font-size:30px;cursor:pointer}
+.record-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.record-field{display:flex;flex-direction:column;gap:6px}.record-field.full{grid-column:1/-1}.record-field label{font-size:10px;color:#80a9ba;letter-spacing:.1em;font-weight:800}.record-fields textarea{min-height:85px;resize:vertical}
+.record-error{color:#ff9999;font-size:12px;margin-top:10px;min-height:18px}
+.record-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:14px}
+@media(max-width:650px){.module-head{align-items:flex-start}.module-orb{width:60px;height:60px;flex-basis:60px;font-size:9px}.module-stats{grid-template-columns:1fr}.module-toolbar>*{flex:1 1 100%!important}.record-fields{grid-template-columns:1fr}.record-field.full{grid-column:auto}.record-actions{flex-direction:column-reverse}.record-actions button{width:100%}}
+
 </style>
 </head>
 <body>
@@ -441,14 +487,28 @@ footer{font:9px ui-monospace,monospace;letter-spacing:.12em}
 <div class="grid" style="margin-top:18px"><div class="code">CASOS ABIERTOS · 12</div><div class="code">PISTAS EN ANÁLISIS · 27</div><div class="code">AGENTES ACTIVOS · 8</div><div class="code">COMUNICACIONES · 43</div></div></div>
 <div class="card" style="margin-top:16px;margin-bottom:0"><span class="tag">ESTADO OPERATIVO</span><div class="row"><b>Red interna</b><span>ACTIVA</span></div><div class="row"><b>Sistema de comunicaciones</b><span>OPERATIVO</span></div><div class="row"><b>Base de datos</b><span>ACTUALIZADA</span></div></div></div></section>
 
-<section id="expedientes" class="page"><div class="card"><h2>Expedientes</h2><div class="row"><b>EXP-001 — Operación Faro</b><span>CONFIDENCIAL</span></div><div class="row"><b>EXP-002 — Archivo Niebla</b><span>RESTRINGIDO</span></div><div class="row"><b>EXP-003 — Código Ámbar</b><span>CONFIDENCIAL</span></div><button class="back" onclick="showPage('inicio')">← Volver</button></div></section>
-<section id="pistas" class="page"><div class="card"><h2>Base de pistas</h2><p>Registro interno de pistas encontradas durante las investigaciones.</p><div class="code">PISTA-001 · Documento sin identificar · Estado: EN ANÁLISIS</div><br><div class="code">PISTA-002 · Código incompleto · Estado: PENDIENTE</div><br><div class="code">PISTA-003 · Registro de acceso · Estado: VERIFICADO</div><button class="back" onclick="showPage('inicio')">← Volver</button></div></section>
-
-<section id="casos" class="page"><div class="sheet-card"><h2>📁 Casos</h2><p>Registro centralizado de investigaciones de la Agencia.</p>
-<p class="sheet-hint">La hoja se muestra directamente aquí. <b>Doble clic</b> sobre la hoja para abrir Google Sheets.</p>
-<iframe id="casosFrame" class="sheet-frame" title="Hoja de casos" ondblclick="openOriginalSheet('casos')"></iframe>
-<button class="back" onclick="showPage('inicio')">← Volver</button></div></section>
-
+<section id="expedientes" class="page">
+ <div class="module-shell">
+  <div class="module-head"><div><span class="eyebrow">ARCHIVE / CLASSIFIED RECORDS</span><h2>◈ ARCHIVO CLASIFICADO</h2><p>Documentación de investigación organizada por nivel de acceso.</p></div><div class="module-orb">SEC<br>ARCH</div></div>
+  <div class="module-toolbar"><input id="fileSearch" class="module-search" placeholder="Buscar expediente o referencia..." oninput="renderModule('expedientes')"><select id="fileFilter" onchange="renderModule('expedientes')"><option value="">Todos los niveles</option><option>Confidencial</option><option>Restringido</option><option>Secreto</option></select><button class="tech-btn" onclick="openRecordForm('expedientes')">＋ CREAR EXPEDIENTE</button></div>
+  <div id="fileGrid" class="record-grid"></div><div class="module-foot">ARCHIVE NODE · ENCRYPTED INDEX <span>● INDEXED</span></div>
+ </div>
+</section>
+<section id="pistas" class="page">
+ <div class="module-shell">
+  <div class="module-head"><div><span class="eyebrow">EVIDENCE / ANALYSIS LAB</span><h2>◈ LABORATORIO DE EVIDENCIAS</h2><p>Registro y análisis de indicios vinculados a investigaciones.</p></div><div class="module-orb">EVID<br>LAB</div></div>
+  <div class="module-toolbar"><input id="clueSearch" class="module-search" placeholder="Buscar evidencia, código o caso..." oninput="renderModule('pistas')"><select id="clueFilter" onchange="renderModule('pistas')"><option value="">Todos los estados</option><option>En análisis</option><option>Pendiente</option><option>Verificado</option></select><button class="tech-btn" onclick="openRecordForm('pistas')">＋ REGISTRAR EVIDENCIA</button></div>
+  <div id="clueGrid" class="record-grid"></div><div class="module-foot">EVIDENCE TRACKING SYSTEM <span>● LAB READY</span></div>
+ </div>
+</section>
+<section id="casos" class="page">
+ <div class="module-shell">
+  <div class="module-head"><div><span class="eyebrow">INTELLIGENCE / OPERATIONS</span><h2>◈ CENTRO DE INVESTIGACIONES</h2><p>Gestión táctica de operaciones, estados y equipos asignados.</p></div><div class="module-orb">CASE<br>SYS</div></div>
+  <div class="module-stats" id="caseStats"></div>
+  <div class="module-toolbar"><input id="caseSearch" class="module-search" placeholder="Buscar por código, título o agente..." oninput="renderModule('casos')"><select id="caseFilter" onchange="renderModule('casos')"><option value="">Todos los estados</option><option>Abierto</option><option>En análisis</option><option>Cerrado</option></select><button class="tech-btn" onclick="openRecordForm('casos')">＋ NUEVA INVESTIGACIÓN</button></div>
+  <div id="caseGrid" class="record-grid"></div><div class="module-foot">DATABASE NODE · CASE MANAGEMENT <span>● LOCAL STORAGE</span></div>
+ </div>
+</section>
 <section id="comunicaciones" class="page">
   <div class="sheet-card">
     <h2>📡 Comunicaciones</h2>
@@ -537,30 +597,29 @@ footer{font:9px ui-monospace,monospace;letter-spacing:.12em}
       </div>
     </div>
 
-    <div id="avisos" class="comm-panel" style="display:none;margin-top:20px;width:100%">
-      <h3 style="font-size:24px">📢 AVISOS DE LA AGENCIA</h3>
-      <p class="sheet-hint">Hoja de Google Sheets conectada al portal · vista ampliada.</p>
-      <iframe id="avisosFrame" class="sheet-frame" title="Avisos de la Agencia"
-        src="https://docs.google.com/spreadsheets/d/1Hn_oprid9VGgd7w5jP654yWw31Ap3cRb6mxYA8kk3Vw/edit?usp=sharing"></iframe>
+    <div id="avisos" class="comm-panel" style="display:none;margin-top:20px">
+ <div class="module-shell"><div class="module-head"><div><span class="eyebrow">INTERNAL NETWORK / BROADCAST</span><h3>◈ TRANSMISIONES DE CENTRAL</h3><p>Comunicados y alertas de la Agencia.</p></div><div class="module-orb">COM<br>LINK</div></div>
+ <div class="module-toolbar"><input id="noticeSearch" class="module-search" placeholder="Buscar comunicado..." oninput="renderModule('avisos')"><button class="tech-btn" onclick="openRecordForm('avisos')">＋ NUEVO AVISO</button></div><div id="noticeGrid" class="record-grid"></div><div class="module-foot">INTERNAL BROADCAST CHANNEL <span>● CONNECTED</span></div></div>
+ </div>
     </div>
 
     <button class="back" onclick="showPage('inicio')">← Volver</button>
   </div>
 </section>
 <section id="agentes" class="page">
-  <div class="sheet-card">
-    <h2>👮 Agentes</h2>
-    <p>Directorio centralizado de agentes de la Agencia.</p>
-    <iframe class="sheet-frame" title="Agentes de la Agencia"
-      src="https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S1_zfnlGra0Rntruyr5yfxckNLI/edit?usp=sharing"></iframe>
-    <p class="sheet-hint">Doble clic sobre la hoja para abrirla directamente en Google Sheets.</p>
-    <button class="back" onclick="showPage('inicio')">← Volver</button>
-  </div>
+ <div class="module-shell">
+  <div class="module-head"><div><span class="eyebrow">PERSONNEL / ACCESS CONTROL</span><h2>◈ DIRECTORIO OPERATIVO</h2><p>Identidades, rangos, especialidades y estado de servicio.</p></div><div class="module-orb">AGENT<br>NET</div></div>
+  <div class="module-stats" id="agentStats"></div>
+  <div class="module-toolbar"><input id="agentSearch" class="module-search" placeholder="Buscar agente, código o especialidad..." oninput="renderModule('agentes')"><select id="agentFilter" onchange="renderModule('agentes')"><option value="">Todos los estados</option><option>Activo</option><option>Inactivo</option><option>En misión</option></select><button class="tech-btn" onclick="openYoLogin()">＋ GESTIONAR PERSONAL</button></div>
+  <div id="agentGrid" class="record-grid"></div><div class="module-foot">PERSONNEL DATABASE · ACCESS LEVEL 04 <span>● DIRECTORY ONLINE</span></div>
+ </div>
 </section>
+
 </main>
 
 <footer>DOCUMENTO FICTICIO · AGENCIA DE INVESTIGACIÓN · NO ES UN PORTAL OFICIAL</footer>
 
+<div id="recordModal" class="record-modal"><div class="record-dialog"><div class="record-dialog-head"><div><span class="eyebrow">SECURE DATA ENTRY</span><h2 id="recordModalTitle">NUEVO REGISTRO</h2></div><button class="record-close" onclick="closeRecordModal()">×</button></div><form id="recordForm" onsubmit="saveRecord(event)"><div id="recordFields" class="record-fields"></div><div id="recordError" class="record-error"></div><div class="record-actions"><button type="button" class="tech-btn secondary" onclick="closeRecordModal()">CANCELAR</button><button type="submit" class="tech-btn">GUARDAR REGISTRO</button></div></form></div></div>
 <!-- ===================== SISTEMA "YO" — MODALES (nuevo) ===================== -->
 <div id="yoLoginModal" class="yo-modal">
   <div class="yo-box">
@@ -678,17 +737,18 @@ if(input.value===getPortalPassword()){authenticated=true;error.textContent='';ms
 else{msg.classList.remove('show');error.textContent='Contraseña incorrecta. Acceso denegado.';input.select()}}
 function logout(){authenticated=false;document.getElementById('protectedContent').style.display='none';document.getElementById('mainNav').classList.add('hidden');document.getElementById('authScreen').style.display='flex';document.getElementById('loginPassword').value='';document.getElementById('loginError').textContent='';document.getElementById('authorizedMessage').classList.remove('show')}
 function requireAuth(){if(!authenticated){document.getElementById('authScreen').style.display='flex';return false}return true}
-function showPage(id){if(!requireAuth())return;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const target=document.getElementById(id);if(target)target.classList.add('active');document.querySelectorAll('#mainNav button').forEach(b=>{const onclick=b.getAttribute('onclick')||'';b.classList.toggle('active',onclick.includes("showPage('"+id+"')"))});window.scrollTo({top:0,behavior:'smooth'});if(id==='casos')loadSheet('casos')}
+function showPage(id){if(!requireAuth())return;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const target=document.getElementById(id);if(target)target.classList.add('active');document.querySelectorAll('#mainNav button').forEach(b=>{const onclick=b.getAttribute('onclick')||'';b.classList.toggle('active',onclick.includes("showPage('"+id+"')"))});window.scrollTo({top:0,behavior:'smooth'});if(['casos','agentes','expedientes','pistas'].includes(id))renderModule(id)}
 function loadSheet(type){const frame=document.getElementById(type+'Frame');const url=SHEET_URLS[type];if(frame&&url&&!frame.src)frame.src=url}
 function openOriginalSheet(type){if(!requireAuth())return;const url=SHEET_URLS[type];if(url)window.open(url,'_blank','noopener,noreferrer')}
 function openSheet(type){if(!requireAuth())return;showPage(type);loadSheet(type)}
-function showComm(id){if(!requireAuth())return;document.querySelectorAll('.comm-panel').forEach(p=>p.style.display='none');const panel=document.getElementById(id);if(panel)panel.style.display='block';if(id==='avisos')loadSheet('avisos')}
+function showComm(id){if(!requireAuth())return;document.querySelectorAll('.comm-panel').forEach(p=>p.style.display='none');const panel=document.getElementById(id);if(panel)panel.style.display='block';if(id==='avisos')renderModule('avisos')}
 document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 
 /* ===================== SISTEMA "YO" (nuevo) ===================== */
 function getDirectorAuthPassword(){ return getDirectorPassword(); }
 const AGENTS_STORAGE_KEY = 'agencia_secret_agents';
 let yoPendingDeleteId = null;
+let directorMode = false;
 
 function getAgents(){
   try{
@@ -720,6 +780,7 @@ function yoAccess(){
   if(!pass){ errorEl.textContent='Introduce una contraseña.'; return; }
 
   if(pass === getDirectorAuthPassword()){
+    directorMode = true;
     closeYoModal('yoLoginModal');
     renderDirectorProfile();
     document.getElementById('yoProfileModal').classList.add('show');
@@ -729,6 +790,7 @@ function yoAccess(){
   const agents = getAgents();
   const found = agents.find(a=>a.password===pass);
   if(found){
+    directorMode = false;
     found.ultimoAcceso = new Date().toLocaleString('es-ES');
     saveAgents(agents);
     closeYoModal('yoLoginModal');
@@ -741,6 +803,7 @@ function yoAccess(){
 }
 
 function yoLogout(){
+  directorMode = false;
   closeYoModal('yoProfileModal');
 }
 
@@ -978,6 +1041,7 @@ function saveAgentForm(){
   }
 
   saveAgents(agents);
+  if(document.getElementById('agentes')?.classList.contains('active'))renderModule('agentes');
   closeYoModal('yoAgentFormModal');
   renderDirectorProfile();
 }
@@ -990,12 +1054,96 @@ function confirmDeleteAgent(){
   if(!yoPendingDeleteId) return;
   const agents = getAgents().filter(a=>a.id!==yoPendingDeleteId);
   saveAgents(agents);
+  if(document.getElementById('agentes')?.classList.contains('active'))renderModule('agentes');
   yoPendingDeleteId = null;
   closeYoModal('yoDeleteModal');
   renderDirectorProfile();
 }
 
 document.getElementById('yoPasswordInput').addEventListener('keydown', e=>{ if(e.key==='Enter') yoAccess(); });
+
+
+/* ===== MODULOS EDITABLES DE LA AGENCIA =====
+   Registros guardados en este navegador. Para sincronizar varios dispositivos
+   será necesario conectar un backend/API desplegado y protegido.
+*/
+const MODULE_KEYS={casos:'agencia_cases_v2',avisos:'agencia_notices_v2',expedientes:'agencia_files_v2',pistas:'agencia_clues_v2'};
+const MODULE_CONFIG={
+ casos:{grid:'caseGrid',search:'caseSearch',filter:'caseFilter',fields:[['codigo','CÓDIGO','text',true],['titulo','NOMBRE DE OPERACIÓN','text',true],['estado','ESTADO','select',['Abierto','En análisis','Cerrado']],['prioridad','PRIORIDAD','select',['Baja','Media','Alta','Crítica']],['agente','AGENTE ASIGNADO','text'],['descripcion','RESUMEN','textarea']]},
+ avisos:{grid:'noticeGrid',search:'noticeSearch',fields:[['titulo','ASUNTO','text',true],['categoria','TIPO DE AVISO','select',['General','Operativo','Urgente','Sistema']],['estado','ESTADO','select',['Publicado','Archivado']],['mensaje','MENSAJE','textarea',true]]},
+ expedientes:{grid:'fileGrid',search:'fileSearch',filter:'fileFilter',fields:[['codigo','REFERENCIA','text',true],['titulo','TÍTULO DEL EXPEDIENTE','text',true],['nivel','NIVEL DE ACCESO','select',['Confidencial','Restringido','Secreto']],['caso','CASO RELACIONADO','text'],['resumen','DESCRIPCIÓN','textarea']]},
+ pistas:{grid:'clueGrid',search:'clueSearch',filter:'clueFilter',fields:[['codigo','CÓDIGO DE EVIDENCIA','text',true],['titulo','ELEMENTO REGISTRADO','text',true],['estado','ESTADO','select',['Pendiente','En análisis','Verificado']],['caso','CASO RELACIONADO','text'],['detalle','NOTAS DE ANÁLISIS','textarea']]}
+};
+const MODULE_SEEDS={
+ casos:[{id:'case_001',codigo:'CAS-001',titulo:'Operación Faro',estado:'Abierto',prioridad:'Alta',agente:'Central',descripcion:'Investigación inicial pendiente de asignación.'},{id:'case_002',codigo:'CAS-002',titulo:'Archivo Niebla',estado:'En análisis',prioridad:'Media',agente:'Unidad de análisis',descripcion:'Revisión de información recopilada.'}],
+ expedientes:[{id:'file_001',codigo:'EXP-001',titulo:'Operación Faro',nivel:'Confidencial',caso:'CAS-001',resumen:'Expediente inicial de la operación.'},{id:'file_002',codigo:'EXP-002',titulo:'Archivo Niebla',nivel:'Restringido',caso:'CAS-002',resumen:'Documentación de trabajo.'}],
+ pistas:[{id:'clue_001',codigo:'PISTA-001',titulo:'Documento sin identificar',estado:'En análisis',caso:'CAS-001',detalle:'Pendiente de clasificación.'},{id:'clue_002',codigo:'PISTA-002',titulo:'Código incompleto',estado:'Pendiente',caso:'CAS-002',detalle:'Registro inicial de evidencia.'},{id:'clue_003',codigo:'PISTA-003',titulo:'Registro de acceso',estado:'Verificado',caso:'CAS-001',detalle:'Registro marcado como verificado.'}],
+ avisos:[{id:'notice_001',titulo:'Canal interno disponible',categoria:'Sistema',estado:'Publicado',mensaje:'El canal de comunicaciones de la Agencia está disponible.',fecha:new Date().toISOString()}]
+};
+let activeRecordType=null,editingRecordId=null;
+function moduleRecords(type){
+ try{const v=localStorage.getItem(MODULE_KEYS[type]);if(v!==null)return JSON.parse(v)||[];localStorage.setItem(MODULE_KEYS[type],JSON.stringify(MODULE_SEEDS[type]||[]));return MODULE_SEEDS[type]||[]}catch(e){return []}
+}
+function saveModuleRecords(type,rows){localStorage.setItem(MODULE_KEYS[type],JSON.stringify(rows))}
+function moduleAdmin(){return directorMode && authenticated}
+function moduleStats(type,rows){
+ if(type==='casos'){const open=rows.filter(x=>x.estado!=='Cerrado').length;return [['TOTAL DE CASOS',rows.length],['EN CURSO',open],['PRIORIDAD ALTA',rows.filter(x=>['Alta','Crítica'].includes(x.prioridad)).length]]}
+ const agents=getAgents();return [['PERSONAL REGISTRADO',agents.length],['ACTIVOS',agents.filter(x=>(x.estado||'').toLowerCase().includes('activ')).length],['UNIDADES',new Set(agents.map(x=>x.unidad).filter(Boolean)).size]]
+}
+function renderModule(type){
+ const cfg=MODULE_CONFIG[type];if(!cfg)return;
+ if(type==='agentes'){
+  const q=(document.getElementById('agentSearch')?.value||'').toLowerCase(),f=document.getElementById('agentFilter')?.value||'';
+  const rows=getAgents().filter(a=>(!f||(a.estado||'').toLowerCase()===f.toLowerCase())&&[a.numero,a.nombre,a.alias,a.especialidad,a.unidad].join(' ').toLowerCase().includes(q));
+  const st=moduleStats('agentes',rows);document.getElementById('agentStats').innerHTML=st.map(x=>'<div class="module-stat"><b>'+esc(x[1])+'</b><span>'+esc(x[0])+'</span></div>').join('');
+  document.getElementById('agentGrid').innerHTML=rows.map(a=>'<article class="record-card"><span class="record-code">AGENT ID / '+esc(a.numero)+'</span><h3>'+esc(a.nombre)+'</h3><p>'+esc(a.alias||'Sin alias')+' · '+esc(a.rango||'Rango no asignado')+'</p><p>UNIDAD: '+esc(a.unidad||'—')+'</p><p>ESPECIALIDAD: '+esc(a.especialidad||'—')+'</p><div class="record-meta"><span>'+esc(a.estado||'Sin estado')+'</span><span class="record-status">'+esc(a.nivel||'ACCESO')+'</span></div></article>').join('')||'<div class="module-empty">NO SE ENCONTRARON AGENTES · Añade personal desde el panel YO del Director.</div>';
+  return;
+ }
+ let rows=moduleRecords(type),q=(document.getElementById(cfg.search)?.value||'').toLowerCase(),f=cfg.filter?(document.getElementById(cfg.filter)?.value||''):'';
+ rows=rows.filter(x=>(!f||[x.estado,x.nivel].includes(f))&&Object.values(x).join(' ').toLowerCase().includes(q));
+ const grid=document.getElementById(cfg.grid);if(!grid)return;
+ grid.innerHTML=rows.map(x=>{
+  const title=x.titulo||'Comunicado',code=x.codigo||x.categoria||'TRANSMISIÓN',desc=x.descripcion||x.resumen||x.detalle||x.mensaje||'Sin descripción registrada',status=x.estado||x.nivel||x.prioridad||x.categoria||'REGISTRO';
+  return '<article class="record-card"><span class="record-code">'+esc(code)+'</span><h3>'+esc(title)+'</h3><p>'+esc(desc)+'</p><div class="record-meta"><span>'+esc(x.agente||x.caso||x.categoria||'AGENCIA CENTRAL')+'</span><span class="record-status">'+esc(status)+'</span></div><div class="record-buttons"><button onclick="viewRecord(\''+type+'\',\''+x.id+'\')">VER DETALLES</button>'+(moduleAdmin()?'<button onclick="openRecordForm(\''+type+'\',\''+x.id+'\')">EDITAR</button><button class="danger" onclick="deleteRecord(\''+type+'\',\''+x.id+'\')">ELIMINAR</button>':'')+'</div></article>'
+ }).join('')||'<div class="module-empty">SIN REGISTROS PARA MOSTRAR · '+(moduleAdmin()?'Utiliza el botón de alta para crear el primero.':'Esperando registros de la central.')+'</div>';
+ if(type==='casos'){const st=moduleStats(type,moduleRecords(type));document.getElementById('caseStats').innerHTML=st.map(x=>'<div class="module-stat"><b>'+esc(x[1])+'</b><span>'+esc(x[0])+'</span></div>').join('')}
+}
+function openRecordForm(type,id=''){
+ if(!moduleAdmin()){alert('ACCESO RESTRINGIDO: solo el Director puede modificar registros.');return}
+ activeRecordType=type;editingRecordId=id;document.getElementById('recordForm').onsubmit=saveRecord;document.querySelector('#recordForm .record-actions').innerHTML='<button type="button" class="tech-btn secondary" onclick="closeRecordModal()">CANCELAR</button><button type="submit" class="tech-btn">GUARDAR REGISTRO</button>';const cfg=MODULE_CONFIG[type],row=id?moduleRecords(type).find(x=>x.id===id)||{}:{};
+ document.getElementById('recordModalTitle').textContent=(id?'EDITAR ':'NUEVO ')+({casos:'CASO',avisos:'COMUNICADO',expedientes:'EXPEDIENTE',pistas:'REGISTRO DE EVIDENCIA'}[type]);
+ document.getElementById('recordError').textContent='';
+ document.getElementById('recordFields').innerHTML=cfg.fields.map(([key,label,kind,extra])=>{
+  const val=row[key]||'';
+  let control=kind==='select'?'<select name="'+key+'">'+extra.map(o=>'<option '+(o===val?'selected':'')+'>'+o+'</option>').join('')+'</select>':kind==='textarea'?'<textarea name="'+key+'" '+(extra===true?'required':'')+'>'+esc(val==='—'?'':val)+'</textarea>':'<input name="'+key+'" value="'+esc(val==='—'?'':val)+'" '+(extra===true?'required':'')+' autocomplete="off">';
+  return '<div class="record-field '+(kind==='textarea'?'full':'')+'"><label>'+label+(extra===true?' *':'')+'</label>'+control+'</div>'
+ }).join('');
+ document.getElementById('recordModal').classList.add('show');
+}
+function closeRecordModal(){document.getElementById('recordModal').classList.remove('show');}
+function saveRecord(e){
+ e.preventDefault();if(!moduleAdmin())return;
+ const cfg=MODULE_CONFIG[activeRecordType],form=new FormData(document.getElementById('recordForm')),data={};
+ cfg.fields.forEach(([key])=>data[key]=String(form.get(key)||'').trim());
+ if(cfg.fields.some(([key,,kind,required])=>required===true&&!data[key])){document.getElementById('recordError').textContent='Completa todos los campos obligatorios.';return}
+ const rows=moduleRecords(activeRecordType);
+ if(editingRecordId){const i=rows.findIndex(x=>x.id===editingRecordId);if(i>=0)rows[i]={...rows[i],...data,updatedAt:new Date().toISOString()}}
+ else rows.unshift({id:activeRecordType+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),...data,createdAt:new Date().toISOString()});
+ saveModuleRecords(activeRecordType,rows);const t=activeRecordType;closeRecordModal();renderModule(t);
+}
+function deleteRecord(type,id){
+ if(!moduleAdmin())return;if(!confirm('¿Confirmas que quieres eliminar este registro?'))return;
+ saveModuleRecords(type,moduleRecords(type).filter(x=>x.id!==id));renderModule(type);
+}
+function viewRecord(type,id){
+ const row=moduleRecords(type).find(x=>x.id===id);if(!row)return;
+ const details=Object.entries(row).filter(([k])=>k!=='id').map(([k,v])=>'<div class="yo-profile-row"><b>'+esc(k.toUpperCase())+'</b><span>'+esc(v)+'</span></div>').join('');
+ document.getElementById('recordModalTitle').textContent='FICHA DE REGISTRO';
+ document.getElementById('recordFields').innerHTML=details;document.getElementById('recordError').textContent='';
+ document.querySelector('#recordForm .record-actions').innerHTML='<button type="button" class="tech-btn" onclick="closeRecordModal()">CERRAR FICHA</button>';
+ document.getElementById('recordForm').onsubmit=e=>e.preventDefault();document.getElementById('recordModal').classList.add('show');
+}
+document.addEventListener('DOMContentLoaded',()=>{['casos','agentes','expedientes','pistas'].forEach(t=>{if(document.getElementById(t)?.classList.contains('active'))renderModule(t)})});
 
 /* ===================== IDIOMES: CATALÀ / ESPANYOL ===================== */
 const TRANSLATIONS = {
@@ -1015,7 +1163,7 @@ const TRANSLATIONS = {
     "IDENTIFICACIÓN — YO":"IDENTIFICACIÓN — YO","Introduce tu contraseña personal para acceder a tu perfil.":"Introduce tu contraseña personal para acceder a tu perfil.","CONTRASEÑA PERSONAL":"CONTRASEÑA PERSONAL","Contraseña personal":"Contraseña personal","CANCELAR":"CANCELAR","ACCEDER":"ACCEDER","PERFIL PERSONAL":"PERFIL PERSONAL","DIRECTOR DE LA AGENCIA":"DIRECTOR DE LA AGENCIA","DIRECCIÓN":"DIRECCIÓN","Cargo":"Cargo","Director":"Director","Nivel de autorización":"Nivel de autorización","MÁXIMO":"MÁXIMO","Panel del Director":"Panel del Director","Total de agentes":"Total de agentes","Agentes activos":"Agentes activos","Estado del sistema":"Estado del sistema","Contraseñas de agentes / Gestión":"Contraseñas de agentes / Gestión","＋ AÑADIR AGENTE":"＋ AÑADIR AGENTE","MOSTRAR":"MOSTRAR","EDITAR":"EDITAR","ELIMINAR":"ELIMINAR","EDITAR AGENTE":"EDITAR AGENTE","GUARDAR AGENTE":"GUARDAR AGENTE","IDENTIFICACIÓN":"IDENTIFICACIÓN","Número de agente *":"Número de agente *","Nombre completo *":"Nombre completo *","Nombre completo":"Nombre completo","Alias / código operativo":"Alias / código operativo","INFORMACIÓN":"INFORMACIÓN","Fecha de incorporación":"Fecha de incorporación","Estado":"Estado","Rango":"Rango","Unidad":"Unidad","Especialidad":"Especialidad","Zona asignada":"Zona asignada","Supervisor":"Supervisor","SEGURIDAD":"SEGURIDAD","ACTIVIDAD":"ACTIVIDAD","Casos asignados":"Casos asignados","Pistas registradas":"Pistas registradas","Expedientes consultados":"Expedientes consultados","Último acceso":"Último acceso","Estado de la cuenta":"Estado de la cuenta","⚠️ CONFIRMAR ELIMINACIÓN":"⚠️ CONFIRMAR ELIMINACIÓN","¿ESTÁS SEGURO DE QUE QUIERES ELIMINAR ESTE AGENTE?":"¿ESTÁS SEGURO DE QUE QUIERES ELIMINAR ESTE AGENTE?",
     "SEGURIDAD DEL DIRECTOR":"SEGURIDAD DEL DIRECTOR","Cambiar contraseña del Director":"Cambiar contraseña del Director","Modifica la contraseña utilizada para entrar en «YO» como Director.":"Modifica la contraseña utilizada para entrar en «YO» como Director.","Cambiar contraseña del Portal":"Cambiar contraseña del Portal","Modifica la contraseña general necesaria para entrar al portal.":"Modifica la contraseña general necesaria para entrar al portal.","CAMBIAR CONTRASEÑA":"CAMBIAR CONTRASEÑA","CAMBIAR CONTRASEÑA DEL DIRECTOR":"CAMBIAR CONTRASEÑA DEL DIRECTOR","CAMBIAR CONTRASEÑA DEL PORTAL":"CAMBIAR CONTRASEÑA DEL PORTAL","Esta contraseña se utiliza para acceder al perfil del Director desde «YO».":"Esta contraseña se utiliza para acceder al perfil del Director desde «YO».","Esta contraseña se utiliza para entrar al portal interno de la Agencia.":"Esta contraseña se utiliza para entrar al portal interno de la Agencia.","CONTRASEÑA ACTUAL":"CONTRASEÑA ACTUAL","NUEVA CONTRASEÑA":"NUEVA CONTRASEÑA","CONFIRMAR NUEVA CONTRASEÑA":"CONFIRMAR NUEVA CONTRASEÑA","GUARDAR CAMBIOS":"GUARDAR CAMBIOS","Todos los campos son obligatorios.":"Todos los campos son obligatorios.","La contraseña actual no es correcta.":"La contraseña actual no es correcta.","La nueva contraseña debe tener al menos 4 caracteres.":"La nueva contraseña debe tener al menos 4 caracteres.","Las nuevas contraseñas no coinciden.":"Las nuevas contraseñas no coinciden.","Contraseña incorrecta. Acceso denegado.":"Contraseña incorrecta. Acceso denegado.","Introduce una contraseña.":"Introduce una contraseña.","Los campos Número de agente, Nombre completo y Contraseña son obligatorios.":"Los campos Número de agente, Nombre completo y Contraseña son obligatorios.","La contraseña del agente no puede coincidir con la del Director.":"La contraseña del agente no puede coincidir con la del Director.","Ya existe un agente con ese número.":"Ya existe un agente con ese número.","Ya existe un agente con esa contraseña.":"Ya existe un agente con esa contraseña."
   },
-  "ca": {
+  "ca": {"◈ CENTRO DE INVESTIGACIONES":"◈ CENTRE D’INVESTIGACIONS","Gestión táctica de operaciones, estados y equipos asignados.":"Gestió tàctica d’operacions, estats i equips assignats.","◈ DIRECTORIO OPERATIVO":"◈ DIRECTORI OPERATIU","Identidades, rangos, especialidades y estado de servicio.":"Identitats, rangs, especialitats i estat de servei.","◈ ARCHIVO CLASIFICADO":"◈ ARXIU CLASSIFICAT","Documentación de investigación organizada por nivel de acceso.":"Documentació d’investigació organitzada per nivell d’accés.","◈ LABORATORIO DE EVIDENCIAS":"◈ LABORATORI D’EVIDÈNCIES","Registro y análisis de indicios vinculados a investigaciones.":"Registre i anàlisi d’indicis vinculats a investigacions.","＋ NUEVA INVESTIGACIÓN":"＋ NOVA INVESTIGACIÓ","＋ CREAR EXPEDIENTE":"＋ CREAR EXPEDIENT","＋ REGISTRAR EVIDENCIA":"＋ REGISTRAR EVIDÈNCIA","＋ NUEVO AVISO":"＋ NOU AVÍS","Buscar por código, título o agente...":"Cerca per codi, títol o agent...","Buscar agente, código o especialidad...":"Cerca agent, codi o especialitat...","Buscar expediente o referencia...":"Cerca expedient o referència...","Buscar evidencia, código o caso...":"Cerca evidència, codi o cas...","Buscar comunicado...":"Cerca comunicat...","Todos los estados":"Tots els estats","Todos los niveles":"Tots els nivells","VER DETALLES":"VEURE DETALLS","EDITAR":"EDITAR","ELIMINAR":"ELIMINAR","SIN REGISTROS PARA MOSTRAR · ":"SENSE REGISTRES PER MOSTRAR · ","NO SE ENCONTRARON AGENTES · Añade personal desde el panel YO del Director.":"NO S’HAN TROBAT AGENTS · Afegeix personal des del panell JO del Director.","Completa todos los campos obligatorios.":"Completa tots els camps obligatoris.","GUARDAR REGISTRO":"DESAR REGISTRE","CANCELAR":"CANCEL·LAR","CERRAR FICHA":"TANCAR FITXA","NUEVO REGISTRO":"NOU REGISTRE","FICHA DE REGISTRO":"FITXA DE REGISTRE","TRANSMISIONES DE CENTRAL":"TRANSMISSIONS DE CENTRAL","Comunicados y alertas de la Agencia.":"Comunicats i alertes de l’Agència.",
     "AGENCIA SECRETA":"AGÈNCIA SECRETA",
     "PORTAL INTERNO DE INVESTIGACIÓN":"PORTAL INTERN D'INVESTIGACIÓ",
     "Centro del Agente":"Centre de l'Agent","Casos":"Casos","Comunicaciones":"Comunicacions","Agentes":"Agents","Expedientes":"Expedients","Base de pistas":"Base de pistes","Cerrar sesión":"Tancar sessió",
