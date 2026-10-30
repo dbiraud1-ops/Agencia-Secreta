@@ -807,6 +807,7 @@ function yoLogout(){
   closeYoModal('yoProfileModal');
 }
 function closeDirectorProfile(){
+  if(!directorMode){yoLogout();return}
   closeYoModal('yoProfileModal');
   if(authenticated){
     const active=document.querySelector('.page.active');
@@ -830,7 +831,7 @@ async function importAgentsFromSheet(){
     const csv=await response.text();
     const rows=parseAgentCSV(csv);
     if(rows.length<2)throw new Error('La hoja no contiene filas de datos o no es accesible públicamente.');
-    const header=rows.shift().map(x=>x.trim().toLowerCase());
+    const header=rows.shift().map(x=>x.replace(/^\\uFEFF/,'').trim().toLowerCase());
     const find=(r,names)=>{const i=header.findIndex(h=>names.includes(h));return i>=0?(r[i]||'').trim():''};
     const imported=rows.filter(r=>r.some(x=>String(x||'').trim())).map(r=>{
       const numero=find(r,['id','número','numero']);
@@ -844,8 +845,9 @@ async function importAgentsFromSheet(){
     const seen=new Set(merged.map(a=>String(a.numero)));
     current.filter(a=>!seen.has(String(a.numero))).forEach(a=>merged.push(a));
     saveAgents(merged);
-    if(status)status.textContent='Importación completada: '+imported.length+' agentes leídos. Los registros locales no presentes en la hoja se han conservado.';
     renderDirectorProfile();
+    const importStatus=document.getElementById('agentImportStatus');
+    if(importStatus)importStatus.textContent='Importación completada: '+imported.length+' agentes leídos. Los registros locales no presentes en la hoja se han conservado.';
     if(document.getElementById('agentes')?.classList.contains('active'))renderModule('agentes');
   }catch(err){
     if(status)status.textContent='No se pudo importar automáticamente: '+err.message+'. Comprueba que la hoja permite ver el contenido mediante enlace o exporta sus datos a CSV.';
@@ -858,7 +860,7 @@ function parseAgentCSV(text){
     if(c==='"'&&quoted&&text[i+1]==='"'){cell+='"';i++}
     else if(c==='"')quoted=!quoted;
     else if(c===','&&!quoted){row.push(cell);cell=''}
-    else if((c==='\\n'||c==='\\r')&&!quoted){if(c==='\\r'&&text[i+1]==='\\n')i++;row.push(cell);out.push(row);row=[];cell=''}
+    else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\\n')i++;row.push(cell);out.push(row);row=[];cell=''}
     else cell+=c;
   }
   if(cell.length||row.length){row.push(cell);out.push(row)}
