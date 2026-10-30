@@ -639,7 +639,7 @@ footer{font:9px ui-monospace,monospace;letter-spacing:.12em}
   <div class="yo-box wide">
     <div id="yoProfileContent"></div>
     <div class="yo-btn-row">
-      <button class="yo-secondary" onclick="yoLogout()">CERRAR SESIÓN</button>
+      <button class="yo-secondary" onclick="closeDirectorProfile()">VOLVER AL PORTAL</button><button class="yo-danger" onclick="yoLogout()">CERRAR SESIÓN DIRECTOR</button>
     </div>
   </div>
 </div>
@@ -806,6 +806,64 @@ function yoLogout(){
   directorMode = false;
   closeYoModal('yoProfileModal');
 }
+function closeDirectorProfile(){
+  closeYoModal('yoProfileModal');
+  if(authenticated){
+    const active=document.querySelector('.page.active');
+    if(active){
+      const id=active.id;
+      if(['casos','agentes','expedientes','pistas'].includes(id))renderModule(id);
+      if(id==='comunicaciones'&&document.getElementById('avisos').style.display!=='none')renderModule('avisos');
+    }
+  }
+}
+
+
+async function importAgentsFromSheet(){
+  const status=document.getElementById('agentImportStatus');
+  if(!directorMode||!authenticated){if(status)status.textContent='Acceso exclusivo del Director.';return}
+  if(status)status.textContent='Conectando con la hoja de Agentes…';
+  const url='https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S1_zfnlGra0Rntruyr5yfxckNLI/export?format=csv&gid=0';
+  try{
+    const response=await fetch(url,{cache:'no-store'});
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    const csv=await response.text();
+    const rows=parseAgentCSV(csv);
+    if(rows.length<2)throw new Error('La hoja no contiene filas de datos o no es accesible públicamente.');
+    const header=rows.shift().map(x=>x.trim().toLowerCase());
+    const find=(r,names)=>{const i=header.findIndex(h=>names.includes(h));return i>=0?(r[i]||'').trim():''};
+    const imported=rows.filter(r=>r.some(x=>String(x||'').trim())).map(r=>{
+      const numero=find(r,['id','número','numero']);
+      const nombre=find(r,['nombre']);
+      if(!numero&&!nombre)return null;
+      return {id:'sheet_'+(numero||nombre),numero,nombre,alias:find(r,['nombre en clave','alias']),rango:find(r,['rango']),unidad:find(r,['departamento','unidad']),especialidad:find(r,['especialidad']),estado:find(r,['estado']),fecha:find(r,['fecha incorporacion','fecha de incorporacion','fecha']),nivel:find(r,['nivel acceso','nivel de acceso','nivel']),observaciones:find(r,['observaciones'])};
+    }).filter(Boolean);
+    if(!imported.length)throw new Error('No se reconocieron agentes. Revisa los encabezados de la hoja.');
+    const current=getAgents(),byNumber=new Map(current.map(a=>[String(a.numero||'').trim(),a]));
+    const merged=imported.map(a=>({...byNumber.get(String(a.numero).trim()),...a,password:byNumber.get(String(a.numero).trim())?.password||'',casos:byNumber.get(String(a.numero).trim())?.casos||0,pistas:byNumber.get(String(a.numero).trim())?.pistas||0,expedientes:byNumber.get(String(a.numero).trim())?.expedientes||0}));
+    const seen=new Set(merged.map(a=>String(a.numero)));
+    current.filter(a=>!seen.has(String(a.numero))).forEach(a=>merged.push(a));
+    saveAgents(merged);
+    if(status)status.textContent='Importación completada: '+imported.length+' agentes leídos. Los registros locales no presentes en la hoja se han conservado.';
+    renderDirectorProfile();
+    if(document.getElementById('agentes')?.classList.contains('active'))renderModule('agentes');
+  }catch(err){
+    if(status)status.textContent='No se pudo importar automáticamente: '+err.message+'. Comprueba que la hoja permite ver el contenido mediante enlace o exporta sus datos a CSV.';
+  }
+}
+function parseAgentCSV(text){
+  const out=[];let row=[],cell='',quoted=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(c==='"'&&quoted&&text[i+1]==='"'){cell+='"';i++}
+    else if(c==='"')quoted=!quoted;
+    else if(c===','&&!quoted){row.push(cell);cell=''}
+    else if((c==='\\n'||c==='\\r')&&!quoted){if(c==='\\r'&&text[i+1]==='\\n')i++;row.push(cell);out.push(row);row=[];cell=''}
+    else cell+=c;
+  }
+  if(cell.length||row.length){row.push(cell);out.push(row)}
+  return out;
+}
 
 function renderAgentProfile(agent){
   const html = `
@@ -878,6 +936,7 @@ function renderDirectorProfile(){
 
     <div class="yo-section-title">Contraseñas de agentes / Gestión</div>
     <button class="yo-primary" style="margin-bottom:10px" onclick="openAddAgent()">＋ AÑADIR AGENTE</button>
+    <button class="yo-secondary" style="margin:0 0 10px 8px" onclick="importAgentsFromSheet()">↻ IMPORTAR AGENTES DE GOOGLE SHEETS</button><div id="agentImportStatus" class="yo-error"></div>
     <div id="yoAgentsList">${rows}</div>
   `;
   document.getElementById('yoProfileContent').innerHTML = html;
