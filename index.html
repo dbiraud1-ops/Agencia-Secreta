@@ -610,7 +610,7 @@ footer{font:9px ui-monospace,monospace;letter-spacing:.12em}
  <div class="module-shell">
   <div class="module-head"><div><span class="eyebrow">PERSONNEL / ACCESS CONTROL</span><h2>◈ DIRECTORIO OPERATIVO</h2><p>Identidades, rangos, especialidades y estado de servicio.</p></div><div class="module-orb">AGENT<br>NET</div></div>
   <div class="module-stats" id="agentStats"></div>
-  <div class="module-toolbar"><input id="agentSearch" class="module-search" placeholder="Buscar agente, código o especialidad..." oninput="renderModule('agentes')"><select id="agentFilter" onchange="renderModule('agentes')"><option value="">Todos los estados</option><option>Activo</option><option>Inactivo</option><option>En misión</option></select><button class="tech-btn" onclick="openYoLogin()">＋ GESTIONAR PERSONAL</button></div>
+  <div class="module-toolbar"><input id="agentSearch" class="module-search" placeholder="Buscar agente, código o especialidad..." oninput="renderModule('agentes')"><select id="agentFilter" onchange="renderModule('agentes')"><option value="">Todos los estados</option><option>Activo</option><option>Inactivo</option><option>En misión</option></select><button class="tech-btn" onclick="openAgentManagement()">＋ GESTIONAR PERSONAL</button></div>
   <div id="agentGrid" class="record-grid"></div><div class="module-foot">PERSONNEL DATABASE · ACCESS LEVEL 04 <span>● DIRECTORY ONLINE</span></div>
  </div>
 </section>
@@ -1097,6 +1097,8 @@ function renderModule(type){
   const rows=getAgents().filter(a=>(!f||(a.estado||'').toLowerCase()===f.toLowerCase())&&[a.numero,a.nombre,a.alias,a.especialidad,a.unidad].join(' ').toLowerCase().includes(q));
   const st=moduleStats('agentes',rows);document.getElementById('agentStats').innerHTML=st.map(x=>'<div class="module-stat"><b>'+esc(x[1])+'</b><span>'+esc(x[0])+'</span></div>').join('');
   document.getElementById('agentGrid').innerHTML=rows.map(a=>'<article class="record-card"><span class="record-code">AGENT ID / '+esc(a.numero)+'</span><h3>'+esc(a.nombre)+'</h3><p>'+esc(a.alias||'Sin alias')+' · '+esc(a.rango||'Rango no asignado')+'</p><p>UNIDAD: '+esc(a.unidad||'—')+'</p><p>ESPECIALIDAD: '+esc(a.especialidad||'—')+'</p><div class="record-meta"><span>'+esc(a.estado||'Sin estado')+'</span><span class="record-status">'+esc(a.nivel||'ACCESO')+'</span></div></article>').join('')||'<div class="module-empty">NO SE ENCONTRARON AGENTES · Añade personal desde el panel YO del Director.</div>';
+  const manageBtn=document.querySelector('#agentes .module-toolbar .tech-btn');if(manageBtn)manageBtn.textContent=moduleAdmin()?'＋ AÑADIR / GESTIONAR AGENTES':'ACCEDER A PERFIL YO';
+  if(localStorage.getItem('agencia_language')==='ca')translatePage('ca');
   return;
  }
  let rows=moduleRecords(type),q=(document.getElementById(cfg.search)?.value||'').toLowerCase(),f=cfg.filter?(document.getElementById(cfg.filter)?.value||''):'';
@@ -1107,7 +1109,10 @@ function renderModule(type){
   return '<article class="record-card"><span class="record-code">'+esc(code)+'</span><h3>'+esc(title)+'</h3><p>'+esc(desc)+'</p><div class="record-meta"><span>'+esc(x.agente||x.caso||x.categoria||'AGENCIA CENTRAL')+'</span><span class="record-status">'+esc(status)+'</span></div><div class="record-buttons"><button onclick="viewRecord(\''+type+'\',\''+x.id+'\')">VER DETALLES</button>'+(moduleAdmin()?'<button onclick="openRecordForm(\''+type+'\',\''+x.id+'\')">EDITAR</button><button class="danger" onclick="deleteRecord(\''+type+'\',\''+x.id+'\')">ELIMINAR</button>':'')+'</div></article>'
  }).join('')||'<div class="module-empty">SIN REGISTROS PARA MOSTRAR · '+(moduleAdmin()?'Utiliza el botón de alta para crear el primero.':'Esperando registros de la central.')+'</div>';
  if(type==='casos'){const st=moduleStats(type,moduleRecords(type));document.getElementById('caseStats').innerHTML=st.map(x=>'<div class="module-stat"><b>'+esc(x[1])+'</b><span>'+esc(x[0])+'</span></div>').join('')}
+ const addBtn=document.querySelector('#'+({casos:'casos',avisos:'comunicaciones',expedientes:'expedientes',pistas:'pistas'}[type])+' .module-toolbar .tech-btn');if(addBtn)addBtn.style.display=moduleAdmin()?'':'none';
+ if(localStorage.getItem('agencia_language')==='ca')translatePage('ca');
 }
+function openAgentManagement(){if(directorMode){renderDirectorProfile();document.getElementById('yoProfileModal').classList.add('show')}else openYoLogin();}
 function openRecordForm(type,id=''){
  if(!moduleAdmin()){alert('ACCESO RESTRINGIDO: solo el Director puede modificar registros.');return}
  activeRecordType=type;editingRecordId=id;document.getElementById('recordForm').onsubmit=saveRecord;document.querySelector('#recordForm .record-actions').innerHTML='<button type="button" class="tech-btn secondary" onclick="closeRecordModal()">CANCELAR</button><button type="submit" class="tech-btn">GUARDAR REGISTRO</button>';const cfg=MODULE_CONFIG[type],row=id?moduleRecords(type).find(x=>x.id===id)||{}:{};
@@ -1118,6 +1123,7 @@ function openRecordForm(type,id=''){
   let control=kind==='select'?'<select name="'+key+'">'+extra.map(o=>'<option '+(o===val?'selected':'')+'>'+o+'</option>').join('')+'</select>':kind==='textarea'?'<textarea name="'+key+'" '+(extra===true?'required':'')+'>'+esc(val==='—'?'':val)+'</textarea>':'<input name="'+key+'" value="'+esc(val==='—'?'':val)+'" '+(extra===true?'required':'')+' autocomplete="off">';
   return '<div class="record-field '+(kind==='textarea'?'full':'')+'"><label>'+label+(extra===true?' *':'')+'</label>'+control+'</div>'
  }).join('');
+ if(localStorage.getItem('agencia_language')==='ca')translatePage('ca');
  document.getElementById('recordModal').classList.add('show');
 }
 function closeRecordModal(){document.getElementById('recordModal').classList.remove('show');}
