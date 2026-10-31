@@ -1087,7 +1087,7 @@ async function loadAgentSheetOptions(){
   picker.innerHTML='<option value="">Cargando agentes de la hoja…</option>';
   if(status)status.textContent='Consultando la hoja de cálculo…';
   try{
-    const url='https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S_1_zfnlGra0Rntruyr5yfxckNLI/export?format=csv&gid=0';
+    const url='https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S1_zfnlGra0Rntruyr5yfxckNLI/export?format=csv&gid=0';
     const response=await fetch(url,{cache:'no-store'});
     if(!response.ok)throw new Error('HTTP '+response.status);
     const csv=await response.text();
@@ -1289,7 +1289,7 @@ async function syncAgentDirectoryFromSheet(force=false){
  if(agentSheetSyncPromise)return agentSheetSyncPromise;
  if(!force&&Date.now()-agentSheetLastSync<60000)return false;
  agentSheetSyncPromise=(async()=>{try{
-  const response=await fetch('https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S_1_zfnlGra0Rntruyr5yfxckNLI/export?format=csv&gid=0',{cache:'no-store'});
+  const response=await fetch('https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S1_zfnlGra0Rntruyr5yfxckNLI/export?format=csv&gid=0',{cache:'no-store'});
   if(!response.ok)throw Error('HTTP '+response.status);
   const csv=await response.text();if(/<html[\s>]/i.test(csv.slice(0,500)))throw Error('Google Sheets devolvió una página HTML; comprueba que la hoja esté publicada para lectura.');
   const rows=parseAgentCSV(csv).filter(r=>r.some(c=>String(c||'').trim()));if(rows.length<2)throw Error('No hay filas de agentes');
