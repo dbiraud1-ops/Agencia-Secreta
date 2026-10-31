@@ -1031,12 +1031,14 @@ function clearAgentForm(){
 }
 
 function openAddAgent(){
+  if(!canManageAgents()){alert('Acceso exclusivo del Director o de agentes autorizados.');return}
   clearAgentForm();
   document.getElementById('yoAgentFormTitle').textContent='＋ AÑADIR AGENTE';
   document.getElementById('yoAgentFormModal').classList.add('show');
 }
 
 function openEditAgent(id){
+  if(!canManageAgents()){alert('No tienes permiso para editar agentes.');return}
   const agents = getAgents();
   const a = agents.find(x=>x.id===id);
   if(!a) return;
@@ -1062,6 +1064,7 @@ function openEditAgent(id){
 }
 
 function saveAgentForm(){
+  if(!canManageAgents()){alert('No tienes permiso para guardar cambios de agentes.');return}
   const errorEl = document.getElementById('yoAgentFormError');
   errorEl.textContent='';
 
@@ -1118,11 +1121,12 @@ function saveAgentForm(){
 }
 
 function askDeleteAgent(id){
+  if(!directorMode){alert('Solo el Director puede eliminar agentes.');return}
   yoPendingDeleteId = id;
   document.getElementById('yoDeleteModal').classList.add('show');
 }
 function confirmDeleteAgent(){
-  if(!yoPendingDeleteId) return;
+  if(!directorMode||!yoPendingDeleteId) return;
   const agents = getAgents().filter(a=>a.id!==yoPendingDeleteId);
   saveAgents(agents);
   if(document.getElementById('agentes')?.classList.contains('active'))renderModule('agentes');
@@ -1157,6 +1161,7 @@ function moduleRecords(type){
 }
 function saveModuleRecords(type,rows){localStorage.setItem(MODULE_KEYS[type],JSON.stringify(rows))}
 function moduleAdmin(){return directorMode && authenticated}
+function normalizeAgentStatus(value){const v=String(value||'').trim().toLowerCase();if(v.includes('elimin'))return 'ELIMINADO';if(v.includes('baja')||v.includes('retir'))return 'DE BAJA';if(v.includes('inactiv'))return 'INACTIVO';if(v.includes('activ'))return 'ACTIVO';return v?String(value).toUpperCase():'SIN ESTADO'}
 function moduleStats(type,rows){
  if(type==='casos'){const open=rows.filter(x=>x.estado!=='Cerrado').length;return [['TOTAL DE CASOS',rows.length],['EN CURSO',open],['PRIORIDAD ALTA',rows.filter(x=>['Alta','Crítica'].includes(x.prioridad)).length]]}
  const agents=getAgents();return [['PERSONAL REGISTRADO',agents.length],['ACTIVOS',agents.filter(x=>(x.estado||'').toLowerCase().includes('activ')).length],['UNIDADES',new Set(agents.map(x=>x.unidad).filter(Boolean)).size]]
@@ -1165,10 +1170,10 @@ function renderModule(type){
  const cfg=MODULE_CONFIG[type];if(!cfg)return;
  if(type==='agentes'){
   const q=(document.getElementById('agentSearch')?.value||'').toLowerCase(),f=document.getElementById('agentFilter')?.value||'';
-  const rows=getAgents().filter(a=>(!f||(a.estado||'').toLowerCase()===f.toLowerCase())&&[a.numero,a.nombre,a.alias,a.especialidad,a.unidad].join(' ').toLowerCase().includes(q));
+  const rows=getAgents().filter(a=>(!f||normalizeAgentStatus(a.estado)===f)&&[a.numero,a.nombre,a.alias,a.especialidad,a.unidad,a.rango].join(' ').toLowerCase().includes(q));
   const st=moduleStats('agentes',rows);document.getElementById('agentStats').innerHTML=st.map(x=>'<div class="module-stat"><b>'+esc(x[1])+'</b><span>'+esc(x[0])+'</span></div>').join('');
-  document.getElementById('agentGrid').innerHTML=rows.map(a=>'<article class="record-card"><span class="record-code">AGENT ID / '+esc(a.numero)+'</span><h3>'+esc(a.nombre)+'</h3><p>'+esc(a.alias||'Sin alias')+' · '+esc(a.rango||'Rango no asignado')+'</p><p>UNIDAD: '+esc(a.unidad||'—')+'</p><p>ESPECIALIDAD: '+esc(a.especialidad||'—')+'</p><div class="record-meta"><span>'+esc(a.estado||'Sin estado')+'</span><span class="record-status">'+esc(a.nivel||'ACCESO')+'</span></div></article>').join('')||'<div class="module-empty">NO SE ENCONTRARON AGENTES · Añade personal desde el panel YO del Director.</div>';
-  const manageBtn=document.querySelector('#agentes .module-toolbar .tech-btn');if(manageBtn)manageBtn.textContent=moduleAdmin()?'＋ AÑADIR / GESTIONAR AGENTES':'ACCEDER A PERFIL YO';
+  document.getElementById('agentGrid').innerHTML=rows.map(a=>{const identity=canViewAgentIdentity(a);return '<article class="record-card"><span class="record-code">NÚMERO DE AGENTE / '+esc(a.numero||'—')+'</span><h3>'+esc(identity?(a.nombre||'Nombre no registrado'):'IDENTIDAD RESTRINGIDA')+'</h3><p>RANGO: '+esc(a.rango||'No asignado')+'</p><p>DEPARTAMENTO: '+esc(a.unidad||'No asignado')+'</p><p>ESPECIALIDAD: '+esc(a.especialidad||'No asignada')+'</p><div class="record-meta"><span>'+esc(normalizeAgentStatus(a.estado))+'</span></div>'+(identity?'<p>ALIAS: '+esc(a.alias||'No asignado')+'</p>':'')+'</article>'}).join('')||'<div class="module-empty">NO HAY AGENTES REGISTRADOS.</div>';
+  const manageBtn=document.querySelector('#agentes .module-toolbar .tech-btn');if(manageBtn)manageBtn.textContent=canManageAgents()?'＋ GESTIONAR AGENTES':'GESTIÓN EXCLUSIVA DEL DIRECTOR';
   if(localStorage.getItem('agencia_language')==='ca')translatePage('ca');
   return;
  }
