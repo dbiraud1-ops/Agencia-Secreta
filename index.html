@@ -675,6 +675,13 @@ footer{font:9px ui-monospace,monospace;letter-spacing:.12em}
   <div class="yo-box wide">
     <h2 id="yoAgentFormTitle">＋ AÑADIR AGENTE</h2>
     <div class="yo-error" id="yoAgentFormError"></div>
+    <div id="agentSheetPickerWrap" style="display:none;margin:12px 0;padding:12px;border:1px solid rgba(73,191,220,.3);border-radius:9px;background:rgba(9,26,41,.7)">
+      <label for="agentSheetPicker">SELECCIONAR AGENTE DE LA HOJA DE CÁLCULO</label>
+      <select id="agentSheetPicker" onchange="fillAgentFromSheet(this.value)" style="width:100%;padding:11px;margin-top:7px;border-radius:8px;background:#091a29;color:#e6faff;border:1px solid rgba(73,191,220,.3)">
+        <option value="">Cargando agentes de la hoja…</option>
+      </select>
+      <p id="agentSheetPickerStatus" style="font-size:12px;color:#91acba;margin:7px 0 0"></p>
+    </div>
 
     <h3>IDENTIFICACIÓN</h3>
     <div class="yo-field-grid">
@@ -1039,11 +1046,91 @@ function clearAgentForm(){
   document.getElementById('yoAgentFormError').textContent='';
 }
 
-function openAddAgent(){
+let agentSheetOptions=[];
+
+function normalizeSheetHeader(value){
+  return String(value||'').replace(/^\\uFEFF/,'').trim().toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+}
+
+async function loadAgentSheetOptions(){
+  const wrap=document.getElementById('agentSheetPickerWrap');
+  const picker=document.getElementById('agentSheetPicker');
+  const status=document.getElementById('agentSheetPickerStatus');
+  if(!wrap||!picker)return;
+  wrap.style.display='block';
+  picker.innerHTML='<option value="">Cargando agentes de la hoja…</option>';
+  if(status)status.textContent='Consultando la hoja de cálculo…';
+  try{
+    const url='https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S_1_zfnlGra0Rntruyr5yfxckNLI/export?format=csv&gid=0';
+    const response=await fetch(url,{cache:'no-store'});
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    const csv=await response.text();
+    if(/<html[\\s>]/i.test(csv.slice(0,500)))throw new Error('La hoja no permite lectura pública.');
+    const rows=parseAgentCSV(csv).filter(r=>r.some(c=>String(c||'').trim()));
+    if(rows.length<2)throw new Error('La hoja no contiene agentes.');
+    const headers=rows.shift().map(normalizeSheetHeader);
+    const col=(names,fallback)=>{const wanted=names.map(normalizeSheetHeader);const i=headers.findIndex(h=>wanted.includes(h));return i<0?fallback:i};
+    const ix={
+      numero:col(['id','numero','numero de agente'],0),
+      alias:col(['nombre en clave','alias'],1),
+      nombre:col(['nombre','nombre completo'],2),
+      rango:col(['rango'],3),
+      unidad:col(['departamento','unidad'],4),
+      especialidad:col(['especialidad'],5),
+      estado:col(['estado'],6),
+      fecha:col(['fecha incorporacion','fecha de incorporacion','fecha'],7),
+      nivel:col(['nivel acceso','nivel de acceso','nivel'],8),
+      observaciones:col(['observaciones'],9)
+    };
+    const get=(r,k)=>String(r[ix[k]]||'').trim();
+    const existing=new Set(getAgents().map(a=>String(a.numero||'').trim().toLowerCase()));
+    agentSheetOptions=rows.map(r=>({
+      numero:get(r,'numero'),alias:get(r,'alias'),nombre:get(r,'nombre'),rango:get(r,'rango'),
+      unidad:get(r,'unidad'),especialidad:get(r,'especialidad'),estado:get(r,'estado'),
+      fecha:get(r,'fecha'),nivel:get(r,'nivel'),observaciones:get(r,'observaciones')
+    })).filter(a=>(a.numero||a.nombre)&&!existing.has(a.numero.toLowerCase()));
+    picker.innerHTML='<option value="">Selecciona un agente pendiente de añadir…</option>'+
+      agentSheetOptions.map((a,i)=>'<option value="'+i+'">'+esc(a.numero||'SIN NÚMERO')+' — '+esc(a.nombre||a.alias||'Sin nombre')+'</option>').join('');
+    if(status)status.textContent=agentSheetOptions.length
+      ? agentSheetOptions.length+' agentes de la hoja disponibles para añadir. Los que ya están registrados no aparecen.'
+      : 'No hay agentes nuevos en la hoja. Puede que ya estén todos añadidos.';
+  }catch(err){
+    agentSheetOptions=[];
+    picker.innerHTML='<option value="">No se pudo cargar la hoja</option>';
+    if(status)status.textContent='No se pudieron leer los agentes: '+(err.message||'error de conexión')+'. Puedes rellenar el formulario manualmente.';
+  }
+}
+
+function fillAgentFromSheet(value){
+  if(value===''||!agentSheetOptions[Number(value)])return;
+  const a=agentSheetOptions[Number(value)];
+  document.getElementById('fNumero').value=a.numero;
+  document.getElementById('fNombre').value=a.nombre;
+  document.getElementById('fAlias').value=a.alias;
+  document.getElementById('fEstado').value=a.estado;
+  document.getElementById('fRango').value=a.rango;
+  document.getElementById('fNivel').value=a.nivel;
+  document.getElementById('fUnidad').value=a.unidad;
+  document.getElementById('fEspecialidad').value=a.especialidad;
+  const date=a.fecha;
+  let iso='';
+  if(/^\\d{4}-\\d{2}-\\d{2}$/.test(date))iso=date;
+  else{
+    const m=date.match(/^(\\d{1,2})[\\/-](\\d{1,2})[\\/-](\\d{4})$/);
+    if(m)iso=m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+  }
+  document.getElementById('fFecha').value=iso;
+  const status=document.getElementById('agentSheetPickerStatus');
+  if(status)status.textContent='Datos cargados desde la hoja. Solo falta asignar la contraseña personal y revisar los campos.';
+}
+
+async function openAddAgent(){
   if(!canManageAgents()){alert('Acceso exclusivo del Director o de agentes autorizados.');return}
   clearAgentForm();
   document.getElementById('yoAgentFormTitle').textContent='＋ AÑADIR AGENTE';
+  document.getElementById('agentSheetPickerWrap').style.display='block';
   document.getElementById('yoAgentFormModal').classList.add('show');
+  await loadAgentSheetOptions();
 }
 
 function openEditAgent(id){
