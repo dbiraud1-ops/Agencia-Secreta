@@ -1166,31 +1166,31 @@ function moduleStats(type,rows){
  if(type==='casos'){const open=rows.filter(x=>x.estado!=='Cerrado').length;return [['TOTAL DE CASOS',rows.length],['EN CURSO',open],['PRIORIDAD ALTA',rows.filter(x=>['Alta','Crítica'].includes(x.prioridad)).length]]}
  const agents=getAgents();return [['PERSONAL REGISTRADO',agents.length],['ACTIVOS',agents.filter(x=>(x.estado||'').toLowerCase().includes('activ')).length],['UNIDADES',new Set(agents.map(x=>x.unidad).filter(Boolean)).size]]
 }
-let agentSheetSyncPromise=null,agentSheetSyncError='';
+let agentSheetSyncPromise=null,agentSheetSyncError='',agentSheetLastSync=0;
 async function syncAgentDirectoryFromSheet(force=false){
  if(agentSheetSyncPromise)return agentSheetSyncPromise;
- if(!force&&getAgents().length)return true;
+ if(!force&&Date.now()-agentSheetLastSync<60000)return false;
  agentSheetSyncPromise=(async()=>{try{
-  const response=await fetch('https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S1_zfnlGra0Rntruyr5yfxckNLI/export?format=csv&gid=0',{cache:'no-store'});
+  const response=await fetch('https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S_1_zfnlGra0Rntruyr5yfxckNLI/export?format=csv&gid=0',{cache:'no-store'});
   if(!response.ok)throw Error('HTTP '+response.status);
-  const csv=await response.text();if(/<html[\\s>]/i.test(csv.slice(0,500)))throw Error('La hoja no es públicamente legible');
+  const csv=await response.text();if(/<html[\s>]/i.test(csv.slice(0,500)))throw Error('La hoja no es públicamente legible');
   const rows=parseAgentCSV(csv).filter(r=>r.some(c=>String(c||'').trim()));if(rows.length<2)throw Error('No hay filas de agentes');
-  const norm=v=>String(v||'').replace(/^\\uFEFF/,'').trim().toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+  const norm=v=>String(v||'').replace(/^\uFEFF/,'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
   const heads=rows.shift().map(norm),col=(names,fb)=>{const i=heads.findIndex(h=>names.map(norm).includes(h));return i<0?fb:i};
   const ix=[col(['id','numero','numero de agente'],0),col(['nombre en clave','alias'],1),col(['nombre','nombre completo'],2),col(['rango'],3),col(['departamento','unidad'],4),col(['especialidad'],5),col(['estado'],6),col(['fecha incorporacion','fecha'],7),col(['nivel acceso','nivel'],8),col(['observaciones'],9)];
-  const imported=rows.map(r=>{const v=i=>String(r[ix[i]]||'').trim();const numero=v(0),nombre=v(2);return numero||nombre?{id:'sheet_'+(numero||nombre),numero,alias:v(1),nombre,rango:v(3),unidad:v(4),especialidad:v(5),estado:v(6),fecha:v(7),nivel:v(8),observaciones:v(9)}:null}).filter(Boolean);
+  const imported=rows.map(r=>{const v=i=>String(r[ix[i]]||'').trim(),numero=v(0),nombre=v(2);return numero||nombre?{id:'sheet_'+(numero||nombre),numero,alias:v(1),nombre,rango:v(3),unidad:v(4),especialidad:v(5),estado:v(6),fecha:v(7),nivel:v(8),observaciones:v(9)}:null}).filter(Boolean);
   if(!imported.length)throw Error('No se reconocieron registros');
   const current=getAgents(),byNum=new Map(current.map(a=>[String(a.numero||'').trim().toLowerCase(),a]));
   const merged=imported.map(a=>{const old=byNum.get(String(a.numero||'').trim().toLowerCase())||{};return {...old,...a,id:old.id||a.id,password:old.password||'',casos:old.casos||0,pistas:old.pistas||0,expedientes:old.expedientes||0}});
   const seen=new Set(merged.map(a=>String(a.numero||'').trim().toLowerCase()));current.filter(a=>!seen.has(String(a.numero||'').trim().toLowerCase())).forEach(a=>merged.push(a));
   saveAgents(merged);agentSheetSyncError='';return true;
- }catch(e){agentSheetSyncError=e.message||'Error de carga';return false}finally{agentSheetSyncPromise=null}})();
+ }catch(e){agentSheetSyncError=e.message||'Error de carga';return false}finally{agentSheetLastSync=Date.now();agentSheetSyncPromise=null}})();
  const ok=await agentSheetSyncPromise;if(document.getElementById('agentes')?.classList.contains('active'))renderModule('agentes');return ok;
 }
 function renderModule(type){
  const cfg=MODULE_CONFIG[type];if(!cfg)return;
  if(type==='agentes'){
-  if(!getAgents().length&&!agentSheetSyncPromise&&!agentSheetSyncError)syncAgentDirectoryFromSheet();
+  if(!agentSheetSyncPromise&&Date.now()-agentSheetLastSync>=60000)syncAgentDirectoryFromSheet();
   const q=(document.getElementById('agentSearch')?.value||'').toLowerCase(),f=document.getElementById('agentFilter')?.value||'';
   const rows=getAgents().filter(a=>(!f||normalizeAgentStatus(a.estado)===f)&&[a.numero,a.nombre,a.alias,a.especialidad,a.unidad,a.rango].join(' ').toLowerCase().includes(q));
   const st=moduleStats('agentes',rows);document.getElementById('agentStats').innerHTML=st.map(x=>'<div class="module-stat"><b>'+esc(x[1])+'</b><span>'+esc(x[0])+'</span></div>').join('');
