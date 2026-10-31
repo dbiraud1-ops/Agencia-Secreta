@@ -1144,6 +1144,7 @@ document.getElementById('yoPasswordInput').addEventListener('keydown', e=>{ if(e
 */
 const MODULE_KEYS={casos:'agencia_cases_v2',avisos:'agencia_notices_v2',expedientes:'agencia_files_v2',pistas:'agencia_clues_v2'};
 const MODULE_CONFIG={
+ agentes:{grid:'agentGrid',search:'agentSearch',filter:'agentFilter',fields:[]},
  casos:{grid:'caseGrid',search:'caseSearch',filter:'caseFilter',fields:[['codigo','CÓDIGO','text',true],['titulo','NOMBRE DE OPERACIÓN','text',true],['estado','ESTADO','select',['Abierto','En análisis','Cerrado']],['prioridad','PRIORIDAD','select',['Baja','Media','Alta','Crítica']],['agente','AGENTE ASIGNADO','text'],['descripcion','RESUMEN','textarea']]},
  avisos:{grid:'noticeGrid',search:'noticeSearch',fields:[['titulo','ASUNTO','text',true],['categoria','TIPO DE AVISO','select',['General','Operativo','Urgente','Sistema']],['estado','ESTADO','select',['Publicado','Archivado']],['mensaje','MENSAJE','textarea',true]]},
  expedientes:{grid:'fileGrid',search:'fileSearch',filter:'fileFilter',fields:[['codigo','REFERENCIA','text',true],['titulo','TÍTULO DEL EXPEDIENTE','text',true],['nivel','NIVEL DE ACCESO','select',['Confidencial','Restringido','Secreto']],['caso','CASO RELACIONADO','text'],['resumen','DESCRIPCIÓN','textarea']]},
