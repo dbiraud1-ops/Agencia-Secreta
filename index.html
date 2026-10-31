@@ -836,19 +836,19 @@ async function importAgentsFromSheet(){
     const csv=await response.text();
     const rows=parseAgentCSV(csv);
     if(rows.length<2)throw new Error('La hoja no contiene filas de datos o no es accesible públicamente.');
-    const header=rows.shift().map(x=>x.replace(/^\\uFEFF/,'').trim().toLowerCase());
-    const find=(r,names)=>{const i=header.findIndex(h=>names.includes(h));return i>=0?(r[i]||'').trim():''};
+    const header=rows.shift().map(x=>String(x||'').replace(/^\\uFEFF/,'').trim().toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim());
+    const find=(r,names,fallback=-1)=>{const norm=names.map(n=>n.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim());const i=header.findIndex(h=>norm.includes(h));return (i>=0?r[i]:fallback>=0?r[fallback]:'')?.trim()||''};
     const imported=rows.filter(r=>r.some(x=>String(x||'').trim())).map(r=>{
-      const numero=find(r,['id','número','numero']);
-      const nombre=find(r,['nombre']);
+      const numero=find(r,['id','numero','numero de agente','num agente'],0);
+      const nombre=find(r,['nombre','nombre completo'],2);
       if(!numero&&!nombre)return null;
-      return {id:'sheet_'+(numero||nombre),numero,nombre,alias:find(r,['nombre en clave','alias']),rango:find(r,['rango']),unidad:find(r,['departamento','unidad']),especialidad:find(r,['especialidad']),estado:find(r,['estado']),fecha:find(r,['fecha incorporacion','fecha de incorporacion','fecha']),nivel:find(r,['nivel acceso','nivel de acceso','nivel']),observaciones:find(r,['observaciones'])};
+      return {id:'sheet_'+(numero||nombre),numero,nombre,alias:find(r,['nombre en clave','alias'],1),rango:find(r,['rango'],3),unidad:find(r,['departamento','unidad'],4),especialidad:find(r,['especialidad'],5),estado:find(r,['estado'],6),fecha:find(r,['fecha incorporacion','fecha de incorporacion','fecha'],7),nivel:find(r,['nivel acceso','nivel de acceso','nivel'],8),observaciones:find(r,['observaciones'],9)};
     }).filter(Boolean);
     if(!imported.length)throw new Error('No se reconocieron agentes. Revisa los encabezados de la hoja.');
-    const current=getAgents(),byNumber=new Map(current.map(a=>[String(a.numero||'').trim(),a]));
-    const merged=imported.map(a=>({...byNumber.get(String(a.numero).trim()),...a,password:byNumber.get(String(a.numero).trim())?.password||'',casos:byNumber.get(String(a.numero).trim())?.casos||0,pistas:byNumber.get(String(a.numero).trim())?.pistas||0,expedientes:byNumber.get(String(a.numero).trim())?.expedientes||0}));
-    const seen=new Set(merged.map(a=>String(a.numero)));
-    current.filter(a=>!seen.has(String(a.numero))).forEach(a=>merged.push(a));
+    const current=getAgents(),byNumber=new Map(current.map(a=>[String(a.numero||'').trim().toLowerCase(),a]));
+    const merged=imported.map(a=>{const old=byNumber.get(String(a.numero||'').trim().toLowerCase())||{};return {...old,...a,id:old.id||a.id,password:old.password||'',casos:old.casos||0,pistas:old.pistas||0,expedientes:old.expedientes||0}});
+    const seen=new Set(merged.map(a=>String(a.numero||'').trim().toLowerCase()));
+    current.filter(a=>!seen.has(String(a.numero||'').trim().toLowerCase())).forEach(a=>merged.push(a));
     saveAgents(merged);
     renderDirectorProfile();
     const importStatus=document.getElementById('agentImportStatus');
