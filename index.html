@@ -693,7 +693,7 @@ footer{font:9px ui-monospace,monospace;letter-spacing:.12em}
     <h3>INFORMACIÓN</h3>
     <div class="yo-field-grid">
       <div><label>Fecha de incorporación</label><input id="fFecha" type="date"></div>
-      <div><label>Estado</label><input id="fEstado" placeholder="Activo / Inactivo..."></div>
+      <div><label>Estado</label><select id="fEstado"><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option><option value="En misión">En misión</option><option value="De baja">De baja</option><option value="Eliminado">Eliminado</option></select></div>
       <div><label>Rango</label><input id="fRango"></div>
       <div><label>Nivel de autorización</label><input id="fNivel"></div>
       <div><label>Unidad</label><input id="fUnidad"></div>
@@ -921,7 +921,7 @@ function renderAgentProfile(agent){
 function renderDirectorProfile(){
   if(!directorMode){renderAgentManagementPanel();return}
   const agents = getAgents();
-  const activos = agents.filter(a=>(a.estado||'').toLowerCase().includes('activ')).length;
+  const activos = agents.filter(a=>normalizeAgentStatus(a.estado)==='ACTIVO').length;
 
   let rows = agents.map(a=>`
     <div class="yo-agent-row" id="yoAgentRow_${a.id}">
@@ -1054,6 +1054,23 @@ function normalizeSheetHeader(value){
   return String(value||'').replace(/^\uFEFF/,'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
 }
 
+function parseAgentSheetDate(value){
+  const raw=String(value||'').trim();
+  if(!raw)return '';
+  let m=raw.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})(?:[T\s].*)?$/);
+  if(m)return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
+  m=raw.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})(?:\s+.*)?$/);
+  if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+  if(/^\d{5}(?:\.\d+)?$/.test(raw)){
+    const d=new Date(Date.UTC(1899,11,30)+Number(raw)*86400000);
+    return d.toISOString().slice(0,10);
+  }
+  const months={ene:'01',enero:'01',gen:'01',gener:'01',feb:'02',febrero:'02',mar:'03',marzo:'03',abr:'04',abril:'04',may:'05',mayo:'05',mai:'05',jun:'06',junio:'06',juny:'06',jul:'07',julio:'07',juliol:'07',ago:'08',agosto:'08',agost:'08',sep:'09',sept:'09',septiembre:'09',setembre:'09',oct:'10',octubre:'10',octubre:'10',nov:'11',noviembre:'11',novembre:'11',dic:'12',diciembre:'12',des:'12',desembre:'12'};
+  m=normalizeSheetHeader(raw).match(/^(\d{1,2}) ([a-z]+) (\d{4})$/);
+  if(m&&months[m[2]])return m[3]+'-'+months[m[2]]+'-'+m[1].padStart(2,'0');
+  return '';
+}
+
 async function loadAgentSheetOptions(){
   const wrap=document.getElementById('agentSheetPickerWrap');
   const picker=document.getElementById('agentSheetPicker');
@@ -1114,14 +1131,7 @@ function fillAgentFromSheet(value){
   document.getElementById('fNivel').value=a.nivel;
   document.getElementById('fUnidad').value=a.unidad;
   document.getElementById('fEspecialidad').value=a.especialidad;
-  const date=a.fecha;
-  let iso='';
-  if(/^\d{4}-\d{2}-\d{2}$/.test(date))iso=date;
-  else{
-    const m=date.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
-    if(m)iso=m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
-  }
-  document.getElementById('fFecha').value=iso;
+  document.getElementById('fFecha').value=parseAgentSheetDate(a.fecha);
   const status=document.getElementById('agentSheetPickerStatus');
   if(status)status.textContent='Datos cargados desde la hoja. Solo falta asignar la contraseña personal y revisar los campos.';
 }
@@ -1146,7 +1156,9 @@ function openEditAgent(id){
   document.getElementById('fNombre').value=a.nombre||'';
   document.getElementById('fAlias').value=a.alias||'';
   document.getElementById('fFecha').value=a.fecha||'';
-  document.getElementById('fEstado').value=a.estado||'';
+  const normalizedState=normalizeAgentStatus(a.estado);
+  const stateSelect=document.getElementById('fEstado');
+  stateSelect.value=({'ACTIVO':'Activo','INACTIVO':'Inactivo','DE BAJA':'De baja','ELIMINADO':'Eliminado','EN MISIÓN':'En misión','EN MISION':'En misión'})[normalizedState]||'Inactivo';
   document.getElementById('fRango').value=a.rango||'';
   document.getElementById('fNivel').value=a.nivel||'';
   document.getElementById('fUnidad').value=a.unidad||'';
@@ -1263,7 +1275,7 @@ function moduleAdmin(){return directorMode && authenticated}
 function normalizeAgentStatus(value){const v=String(value||'').trim().toLowerCase();if(v.includes('elimin'))return 'ELIMINADO';if(v.includes('baja')||v.includes('retir'))return 'DE BAJA';if(v.includes('inactiv'))return 'INACTIVO';if(v.includes('activ'))return 'ACTIVO';return v?String(value).toUpperCase():'SIN ESTADO'}
 function moduleStats(type,rows){
  if(type==='casos'){const open=rows.filter(x=>x.estado!=='Cerrado').length;return [['TOTAL DE CASOS',rows.length],['EN CURSO',open],['PRIORIDAD ALTA',rows.filter(x=>['Alta','Crítica'].includes(x.prioridad)).length]]}
- const agents=getAgents();return [['PERSONAL REGISTRADO',agents.length],['ACTIVOS',agents.filter(x=>(x.estado||'').toLowerCase().includes('activ')).length],['UNIDADES',new Set(agents.map(x=>x.unidad).filter(Boolean)).size]]
+ const agents=getAgents();return [['PERSONAL REGISTRADO',agents.length],['ACTIVOS',agents.filter(x=>normalizeAgentStatus(x.estado)==='ACTIVO').length],['UNIDADES',new Set(agents.map(x=>x.unidad).filter(Boolean)).size]]
 }
 let agentSheetSyncPromise=null,agentSheetSyncError='',agentSheetLastSync=0;
 async function syncAgentDirectoryFromSheet(force=false){
