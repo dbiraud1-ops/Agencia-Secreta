@@ -1044,6 +1044,8 @@ function clearAgentForm(){
   document.getElementById('fExpedientes').value=0;
   document.getElementById('fEditingId').value='';
   document.getElementById('yoAgentFormError').textContent='';
+  const sheetPicker=document.getElementById('agentSheetPickerWrap');
+  if(sheetPicker)sheetPicker.style.display='none';
 }
 
 let agentSheetOptions=[];
