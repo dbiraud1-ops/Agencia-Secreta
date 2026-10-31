@@ -1193,14 +1193,21 @@ async function syncAgentDirectoryFromSheet(force=false){
 function renderModule(type){
  const cfg=MODULE_CONFIG[type];if(!cfg)return;
  if(type==='agentes'){
-  if(!agentSheetSyncPromise&&Date.now()-agentSheetLastSync>=60000)syncAgentDirectoryFromSheet();
-  const syncStatus=document.getElementById('agentSyncStatus');if(syncStatus&&agentSheetSyncPromise){syncStatus.style.display='block';syncStatus.textContent='Conectando con Google Sheets…';}else if(syncStatus&&agentSheetSyncError){syncStatus.style.display='block';syncStatus.textContent='No se pudo cargar el directorio: '+agentSheetSyncError+'. Pulsa REINTENTAR CARGA.';}else if(syncStatus){syncStatus.style.display='none';}
-  const q=(document.getElementById('agentSearch')?.value||'').toLowerCase(),f=document.getElementById('agentFilter')?.value||'';
-  const rows=getAgents().filter(a=>(!f||normalizeAgentStatus(a.estado)===f)&&[a.numero,a.nombre,a.alias,a.especialidad,a.unidad,a.rango].join(' ').toLowerCase().includes(q));
-  const st=moduleStats('agentes',rows);document.getElementById('agentStats').innerHTML=st.map(x=>'<div class="module-stat"><b>'+esc(x[1])+'</b><span>'+esc(x[0])+'</span></div>').join('');
-  document.getElementById('agentGrid').innerHTML=rows.map(a=>{const identity=canViewAgentIdentity(a);return '<article class="record-card"><span class="record-code">NÚMERO DE AGENTE / '+esc(a.numero||'—')+'</span><h3>'+esc(identity?(a.nombre||'Nombre no registrado'):'IDENTIDAD RESTRINGIDA')+'</h3><p>RANGO: '+esc(a.rango||'No asignado')+'</p><p>DEPARTAMENTO: '+esc(a.unidad||'No asignado')+'</p><p>ESPECIALIDAD: '+esc(a.especialidad||'No asignada')+'</p><div class="record-meta"><span>'+esc(normalizeAgentStatus(a.estado))+'</span></div>'+(identity?'<p>ALIAS: '+esc(a.alias||'No asignado')+'</p>':'')+'</article>'}).join('')||'<div class="module-empty">'+(agentSheetSyncPromise?'CARGANDO DIRECTORIO DESDE LA HOJA…':(agentSheetSyncError?'NO SE PUDO CARGAR LA HOJA: '+esc(agentSheetSyncError)+' · ':'NO HAY AGENTES REGISTRADOS. '))+'<button class="tech-btn" onclick="agentSheetSyncError=\'\';syncAgentDirectoryFromSheet(true)">REINTENTAR CARGA</button></div>';
+  const grid=document.getElementById('agentGrid');
+  const status=document.getElementById('agentSyncStatus');
+  const all=getAgents();
+  if(status){status.style.display='block';status.textContent='PERSONAL REGISTRADO EN ESTE DISPOSITIVO: '+all.length;}
+  const q=(document.getElementById('agentSearch')?.value||'').toLowerCase(),f=(document.getElementById('agentFilter')?.value||'').toLowerCase();
+  const rows=all.filter(a=>(!f||normalizeAgentStatus(a.estado).toLowerCase()===f)&&[a.numero,a.nombre,a.alias,a.especialidad,a.unidad,a.rango].join(' ').toLowerCase().includes(q));
+  const st=moduleStats('agentes',rows),stats=document.getElementById('agentStats');
+  if(stats)stats.innerHTML=st.map(x=>'<div class="module-stat"><b>'+esc(x[1])+'</b><span>'+esc(x[0])+'</span></div>').join('');
+  if(grid)grid.innerHTML=rows.map(a=>{
+   let identity=false;try{identity=canViewAgentIdentity(a)}catch(e){}
+   return '<article class="record-card"><span class="record-code">NÚMERO DE AGENTE / '+esc(a.numero||'—')+'</span><h3>'+esc(identity?(a.nombre||'Nombre no registrado'):'IDENTIDAD RESTRINGIDA')+'</h3><p>RANGO: '+esc(a.rango||'No asignado')+'</p><p>DEPARTAMENTO: '+esc(a.unidad||'No asignado')+'</p><p>ESPECIALIDAD: '+esc(a.especialidad||'No asignada')+'</p><div class="record-meta"><span>'+esc(normalizeAgentStatus(a.estado))+'</span></div>'+(identity?'<p>ALIAS: '+esc(a.alias||'No asignado')+'</p>':'')+'</article>';
+  }).join('')||'<div class="module-empty">'+(all.length?'NO HAY AGENTES QUE COINCIDAN CON EL FILTRO.':'NO HAY AGENTES GUARDADOS EN ESTE DISPOSITIVO.')+'</div>';
   const manageBtn=document.querySelector('#agentes .module-toolbar .tech-btn');if(manageBtn)manageBtn.textContent=canManageAgents()?'＋ GESTIONAR AGENTES':'GESTIÓN EXCLUSIVA DEL DIRECTOR';
   if(localStorage.getItem('agencia_language')==='ca')translatePage('ca');
+  if(!agentSheetSyncPromise&&Date.now()-agentSheetLastSync>=60000)syncAgentDirectoryFromSheet();
   return;
  }
  let rows=moduleRecords(type),q=(document.getElementById(cfg.search)?.value||'').toLowerCase(),f=cfg.filter?(document.getElementById(cfg.filter)?.value||''):'';
