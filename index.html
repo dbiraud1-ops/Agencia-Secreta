@@ -747,6 +747,11 @@ document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key
 /* ===================== SISTEMA "YO" (nuevo) ===================== */
 function getDirectorAuthPassword(){ return getDirectorPassword(); }
 const AGENTS_STORAGE_KEY = 'agencia_secret_agents';
+const AGENT_PERMISSIONS_KEY='agencia_agent_permissions';let currentAgentId=null;
+function getAgentPermissions(){try{return JSON.parse(localStorage.getItem(AGENT_PERMISSIONS_KEY)||'{"editAgentIds":[],"viewIdentityIds":[]}')}catch(e){return {editAgentIds:[],viewIdentityIds:[]}}}
+function saveAgentPermissions(p){localStorage.setItem(AGENT_PERMISSIONS_KEY,JSON.stringify(p))}
+function canManageAgents(){return directorMode||(currentAgentId&&getAgentPermissions().editAgentIds.includes(currentAgentId))}
+function canViewAgentIdentity(a){return directorMode||(currentAgentId&&getAgentPermissions().viewIdentityIds.includes(currentAgentId))||(a.id===currentAgentId)}
 let yoPendingDeleteId = null;
 let directorMode = false;
 
