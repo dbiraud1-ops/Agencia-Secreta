@@ -1055,19 +1055,26 @@ function normalizeSheetHeader(value){
 }
 
 function parseAgentSheetDate(value){
-  const raw=String(value||'').trim();
+  const raw=String(value??'').replace(/^\uFEFF/,'').trim();
   if(!raw)return '';
   let m=raw.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})(?:[T\s].*)?$/);
   if(m)return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
-  m=raw.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})(?:\s+.*)?$/);
-  if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
-  if(/^\d{5}(?:\.\d+)?$/.test(raw)){
-    const d=new Date(Date.UTC(1899,11,30)+Number(raw)*86400000);
-    return d.toISOString().slice(0,10);
+  m=raw.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})(?:[T\s].*)?$/);
+  if(m){
+    let day=Number(m[1]),month=Number(m[2]),year=m[3];
+    // En fechas ambiguas se prioriza el formato habitual de la hoja: DD/MM/AAAA.
+    if(day<=12&&month>12)[day,month]=[month,day];
+    if(day>=1&&day<=31&&month>=1&&month<=12)return year+'-'+String(month).padStart(2,'0')+'-'+String(day).padStart(2,'0');
   }
-  const months={ene:'01',enero:'01',gen:'01',gener:'01',feb:'02',febrero:'02',mar:'03',marzo:'03',abr:'04',abril:'04',may:'05',mayo:'05',mai:'05',jun:'06',junio:'06',juny:'06',jul:'07',julio:'07',juliol:'07',ago:'08',agosto:'08',agost:'08',sep:'09',sept:'09',septiembre:'09',setembre:'09',oct:'10',octubre:'10',octubre:'10',nov:'11',noviembre:'11',novembre:'11',dic:'12',diciembre:'12',des:'12',desembre:'12'};
+  if(/^\d{4,6}(?:\.\d+)?$/.test(raw)){
+    const d=new Date(Date.UTC(1899,11,30)+Number(raw)*86400000);
+    if(!Number.isNaN(d.getTime()))return d.toISOString().slice(0,10);
+  }
+  const months={ene:'01',enero:'01',gen:'01',gener:'01',feb:'02',febrero:'02',mar:'03',marzo:'03',abr:'04',abril:'04',may:'05',mayo:'05',mai:'05',jun:'06',junio:'06',juny:'06',jul:'07',julio:'07',juliol:'07',ago:'08',agosto:'08',agost:'08',sep:'09',sept:'09',septiembre:'09',setembre:'09',oct:'10',octubre:'10',nov:'11',noviembre:'11',novembre:'11',dic:'12',diciembre:'12',des:'12',desembre:'12'};
   m=normalizeSheetHeader(raw).match(/^(\d{1,2}) ([a-z]+) (\d{4})$/);
   if(m&&months[m[2]])return m[3]+'-'+months[m[2]]+'-'+m[1].padStart(2,'0');
+  const parsed=new Date(raw);
+  if(!Number.isNaN(parsed.getTime()))return parsed.getFullYear()+'-'+String(parsed.getMonth()+1).padStart(2,'0')+'-'+String(parsed.getDate()).padStart(2,'0');
   return '';
 }
 
@@ -1097,7 +1104,7 @@ async function loadAgentSheetOptions(){
       unidad:col(['departamento','unidad'],4),
       especialidad:col(['especialidad'],5),
       estado:col(['estado'],6),
-      fecha:col(['fecha incorporacion','fecha de incorporacion','fecha'],7),
+      fecha:(()=>{const i=headers.findIndex(h=>h==='fecha'||(h.includes('fecha')&&h.includes('incorpor')));return i>=0?i:7})(),
       nivel:col(['nivel acceso','nivel de acceso','nivel'],8),
       observaciones:col(['observaciones'],9)
     };
@@ -1133,7 +1140,7 @@ function fillAgentFromSheet(value){
   document.getElementById('fEspecialidad').value=a.especialidad;
   document.getElementById('fFecha').value=parseAgentSheetDate(a.fecha);
   const status=document.getElementById('agentSheetPickerStatus');
-  if(status)status.textContent='Datos cargados desde la hoja. Solo falta asignar la contraseña personal y revisar los campos.';
+  if(status)status.textContent='Datos cargados desde la hoja.'+(a.fecha?' Fecha leída: '+a.fecha+(document.getElementById('fFecha').value?' ('+document.getElementById('fFecha').value+')':' — formato no reconocido'):' La hoja no contiene una fecha para este agente.')+' Solo falta asignar la contraseña personal y revisar los campos.';
 }
 
 async function openAddAgent(){
