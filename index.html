@@ -411,6 +411,15 @@ footer{font:9px ui-monospace,monospace;letter-spacing:.12em}
 .tech-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,199,226,.22);filter:brightness(1.12)}
 .tech-btn.secondary{background:transparent;border-color:rgba(133,175,194,.35);color:#9db8c6}
 .record-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:13px}
+/* Directorio de agentes en formato de lista */
+#agentGrid{display:flex;flex-direction:column;gap:8px}
+#agentGrid .agent-list-row{display:grid;grid-template-columns:1.1fr repeat(4,minmax(0,1fr));align-items:center;gap:14px;padding:13px 16px;border:1px solid rgba(70,181,210,.22);border-radius:9px;background:linear-gradient(90deg,rgba(15,43,62,.92),rgba(8,25,40,.96));min-width:0}
+#agentGrid .agent-list-number{color:#54d8ed;font-weight:900;font-size:12px;letter-spacing:.06em}
+#agentGrid .agent-list-field{display:flex;flex-direction:column;gap:4px;min-width:0;color:#eafaff;font-size:12px;overflow-wrap:anywhere}
+#agentGrid .agent-list-field small{color:#81a3b5;font-size:9px;letter-spacing:.1em;font-weight:800}
+#agentGrid .agent-list-status{justify-self:start;padding:5px 9px;border:1px solid rgba(67,211,177,.3);border-radius:20px;color:#69e2bf;background:rgba(27,157,125,.08);font-size:10px}
+@media(max-width:760px){#agentGrid .agent-list-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#agentGrid .agent-list-number{grid-column:1/-1}}
+
 .record-card{position:relative;padding:17px;border:1px solid rgba(70,181,210,.22);border-radius:13px;background:linear-gradient(145deg,rgba(15,43,62,.92),rgba(8,25,40,.96));transition:.2s;min-width:0}
 .record-card:hover{border-color:rgba(73,222,239,.65);transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.2)}
 .record-card:before{content:"";position:absolute;top:0;left:17px;right:17px;height:1px;background:linear-gradient(90deg,transparent,#49d9ed,transparent)}
@@ -1202,10 +1211,15 @@ function renderModule(type){
   const rows=all.filter(a=>(!f||normalizeAgentStatus(a.estado).toLowerCase()===f)&&[a.numero,a.nombre,a.alias,a.especialidad,a.unidad,a.rango].join(' ').toLowerCase().includes(q));
   const st=moduleStats('agentes',rows),stats=document.getElementById('agentStats');
   if(stats)stats.innerHTML=st.map(x=>'<div class="module-stat"><b>'+esc(x[1])+'</b><span>'+esc(x[0])+'</span></div>').join('');
-  if(grid)grid.innerHTML=rows.map(a=>{
-   let identity=false;try{identity=canViewAgentIdentity(a)}catch(e){}
-   return '<article class="record-card"><span class="record-code">NÚMERO DE AGENTE / '+esc(a.numero||'—')+'</span><h3>'+esc(identity?(a.nombre||'Nombre no registrado'):'IDENTIDAD RESTRINGIDA')+'</h3><p>RANGO: '+esc(a.rango||'No asignado')+'</p><p>DEPARTAMENTO: '+esc(a.unidad||'No asignado')+'</p><p>ESPECIALIDAD: '+esc(a.especialidad||'No asignada')+'</p><div class="record-meta"><span>'+esc(normalizeAgentStatus(a.estado))+'</span></div>'+(identity?'<p>ALIAS: '+esc(a.alias||'No asignado')+'</p>':'')+'</article>';
-  }).join('')||'<div class="module-empty">'+(all.length?'NO HAY AGENTES QUE COINCIDAN CON EL FILTRO.':'NO HAY AGENTES GUARDADOS EN ESTE DISPOSITIVO.')+'</div>';
+  if(grid)grid.innerHTML=rows.map(a=>
+   '<article class="agent-list-row">'+
+    '<div class="agent-list-number">AGENTE Nº '+esc(a.numero||'—')+'</div>'+
+    '<div class="agent-list-field"><small>RANGO</small>'+esc(a.rango||'No asignado')+'</div>'+
+    '<div class="agent-list-field"><small>DEPARTAMENTO</small>'+esc(a.unidad||'No asignado')+'</div>'+
+    '<div class="agent-list-field"><small>ESPECIALIDAD</small>'+esc(a.especialidad||'No asignada')+'</div>'+
+    '<div class="agent-list-field"><small>ESTADO</small><span class="agent-list-status">'+esc(normalizeAgentStatus(a.estado))+'</span></div>'+
+   '</article>'
+  ).join('')||'<div class="module-empty">'+(all.length?'NO HAY AGENTES QUE COINCIDAN CON EL FILTRO.':'NO HAY AGENTES GUARDADOS EN ESTE DISPOSITIVO.')+'</div>';
   const manageBtn=document.querySelector('#agentes .module-toolbar .tech-btn');if(manageBtn)manageBtn.textContent=canManageAgents()?'＋ GESTIONAR AGENTES':'GESTIÓN EXCLUSIVA DEL DIRECTOR';
   if(localStorage.getItem('agencia_language')==='ca')translatePage('ca');
   if(!agentSheetSyncPromise&&Date.now()-agentSheetLastSync>=60000)syncAgentDirectoryFromSheet();
