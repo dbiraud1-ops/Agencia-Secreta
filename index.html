@@ -1049,7 +1049,7 @@ function clearAgentForm(){
 let agentSheetOptions=[];
 
 function normalizeSheetHeader(value){
-  return String(value||'').replace(/^\\uFEFF/,'').trim().toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+  return String(value||'').replace(/^\uFEFF/,'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
 }
 
 async function loadAgentSheetOptions(){
@@ -1065,7 +1065,7 @@ async function loadAgentSheetOptions(){
     const response=await fetch(url,{cache:'no-store'});
     if(!response.ok)throw new Error('HTTP '+response.status);
     const csv=await response.text();
-    if(/<html[\\s>]/i.test(csv.slice(0,500)))throw new Error('La hoja no permite lectura pública.');
+    if(/<html[\s>]/i.test(csv.slice(0,500)))throw new Error('La hoja no permite lectura pública.');
     const rows=parseAgentCSV(csv).filter(r=>r.some(c=>String(c||'').trim()));
     if(rows.length<2)throw new Error('La hoja no contiene agentes.');
     const headers=rows.shift().map(normalizeSheetHeader);
@@ -1114,9 +1114,9 @@ function fillAgentFromSheet(value){
   document.getElementById('fEspecialidad').value=a.especialidad;
   const date=a.fecha;
   let iso='';
-  if(/^\\d{4}-\\d{2}-\\d{2}$/.test(date))iso=date;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(date))iso=date;
   else{
-    const m=date.match(/^(\\d{1,2})[\\/-](\\d{1,2})[\\/-](\\d{4})$/);
+    const m=date.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
     if(m)iso=m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
   }
   document.getElementById('fFecha').value=iso;
