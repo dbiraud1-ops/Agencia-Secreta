@@ -785,7 +785,7 @@ function yoAccess(){
   if(!pass){ errorEl.textContent='Introduce una contraseña.'; return; }
 
   if(pass === getDirectorAuthPassword()){
-    directorMode = true;
+    directorMode = true;currentAgentId=null;
     closeYoModal('yoLoginModal');
     renderDirectorProfile();
     document.getElementById('yoProfileModal').classList.add('show');
@@ -795,7 +795,7 @@ function yoAccess(){
   const agents = getAgents();
   const found = agents.find(a=>a.password===pass);
   if(found){
-    directorMode = false;
+    directorMode = false;currentAgentId=found.id;
     found.ultimoAcceso = new Date().toLocaleString('es-ES');
     saveAgents(agents);
     closeYoModal('yoLoginModal');
@@ -808,7 +808,7 @@ function yoAccess(){
 }
 
 function yoLogout(){
-  directorMode = false;
+  directorMode = false;currentAgentId=null;
   closeYoModal('yoProfileModal');
 }
 function closeDirectorProfile(){
@@ -898,10 +898,12 @@ function renderAgentProfile(agent){
     <div class="yo-profile-row"><b>Estado de la cuenta</b><span>${esc(agent.estado)}</span></div>
   `;
   document.getElementById('yoProfileContent').innerHTML = html;
+  renderAgentPermissionControls(agents);
   translatePage(localStorage.getItem('agencia_language') || 'ca');
 }
 
 function renderDirectorProfile(){
+  if(!directorMode){renderAgentManagementPanel();return}
   const agents = getAgents();
   const activos = agents.filter(a=>(a.estado||'').toLowerCase().includes('activ')).length;
 
@@ -941,6 +943,9 @@ function renderDirectorProfile(){
       </div>
     </div>
 
+    <div class="yo-section-title">PERMISOS DE AGENTES</div>
+    <p>Elige quién puede gestionar el directorio y quién puede ver nombre completo y alias.</p>
+    <div class="yo-field-grid"><div><label>EDITAR AGENTES</label><div id="agentEditPermissions"></div></div><div><label>VER IDENTIDAD</label><div id="agentIdentityPermissions"></div></div></div>
     <div class="yo-section-title">Contraseñas de agentes / Gestión</div>
     <button class="yo-primary" style="margin-bottom:10px" onclick="openAddAgent()">＋ AÑADIR AGENTE</button>
     <button class="yo-secondary" style="margin:0 0 10px 8px" onclick="importAgentsFromSheet()">↻ IMPORTAR AGENTES DE GOOGLE SHEETS</button><div id="agentImportStatus" class="yo-error"></div>
@@ -1178,7 +1183,10 @@ function renderModule(type){
  const addBtn=document.querySelector('#'+({casos:'casos',avisos:'comunicaciones',expedientes:'expedientes',pistas:'pistas'}[type])+' .module-toolbar .tech-btn');if(addBtn)addBtn.style.display=moduleAdmin()?'':'none';
  if(localStorage.getItem('agencia_language')==='ca')translatePage('ca');
 }
-function openAgentManagement(){if(directorMode){renderDirectorProfile();document.getElementById('yoProfileModal').classList.add('show')}else openYoLogin();}
+function openAgentManagement(){if(canManageAgents()){renderDirectorProfile();document.getElementById('yoProfileModal').classList.add('show')}else openYoLogin();}
+function renderAgentPermissionControls(agents){const p=getAgentPermissions();const make=(key)=>agents.map(a=>'<label style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" style="width:auto" '+(p[key].includes(a.id)?'checked':'')+' onchange="toggleAgentPermission(\''+key+'\',\''+a.id+'\',this.checked)">'+esc(a.numero)+' — '+esc(a.nombre||a.alias||'Agente')+'</label>').join('')||'Sin agentes';document.getElementById('agentEditPermissions').innerHTML=make('editAgentIds');document.getElementById('agentIdentityPermissions').innerHTML=make('viewIdentityIds')}
+function toggleAgentPermission(key,id,checked){if(!directorMode)return;const p=getAgentPermissions();p[key]=p[key]||[];p[key]=checked?[...new Set([...p[key],id])]:p[key].filter(x=>x!==id);saveAgentPermissions(p)}
+function renderAgentManagementPanel(){const a=getAgents();document.getElementById('yoProfileContent').innerHTML='<span class="tag">GESTIÓN AUTORIZADA</span><h2>DIRECTORIO DE AGENTES</h2><button class="yo-primary" onclick="openAddAgent()">＋ AÑADIR AGENTE</button>'+a.map(x=>'<div class="yo-agent-row"><b>'+esc(x.numero)+' — '+esc(canViewAgentIdentity(x)?x.nombre:(x.alias||'Identidad restringida'))+'</b><button class="yo-edit-btn" onclick="openEditAgent(\''+x.id+'\')">EDITAR</button></div>').join('')}
 function openRecordForm(type,id=''){
  if(!moduleAdmin()){alert('ACCESO RESTRINGIDO: solo el Director puede modificar registros.');return}
  activeRecordType=type;editingRecordId=id;document.getElementById('recordForm').onsubmit=saveRecord;document.querySelector('#recordForm .record-actions').innerHTML='<button type="button" class="tech-btn secondary" onclick="closeRecordModal()">CANCELAR</button><button type="submit" class="tech-btn">GUARDAR REGISTRO</button>';const cfg=MODULE_CONFIG[type],row=id?moduleRecords(type).find(x=>x.id===id)||{}:{};
