@@ -900,7 +900,7 @@ async function importAgentsFromSheet(){
     saveAgents(merged);
     renderDirectorProfile();
     const importStatus=document.getElementById('agentImportStatus');
-    if(importStatus)importStatus.textContent='Directorio actualizado desde Google Sheets: '+imported.length+' agentes.
+    if(importStatus)importStatus.textContent='Directorio actualizado desde Google Sheets: '+imported.length+' agentes.';
     if(document.getElementById('agentes')?.classList.contains('active'))renderModule('agentes');
   }catch(err){
     if(status)status.textContent='No se pudo importar automáticamente: '+err.message+'. Comprueba que la hoja permite ver el contenido mediante enlace o exporta sus datos a CSV.';
