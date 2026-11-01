@@ -785,6 +785,7 @@ function canManageAgents(){return directorMode||(currentAgentId&&getAgentPermiss
 function canViewAgentIdentity(a){return directorMode||(currentAgentId&&getAgentPermissions().viewIdentityIds.includes(currentAgentId))||(a.id===currentAgentId)}
 let yoPendingDeleteId = null;
 let directorMode = false;
+let redirectDirectorToAgentSheet = false;
 
 function getAgents(){
   try{
@@ -819,6 +820,7 @@ async function yoAccess(){
   const agents = getAgents();
   const found = agents.find(a=>a.password===pass);
   if(found){
+    if(redirectDirectorToAgentSheet){errorEl.textContent='Solo Dirección puede gestionar el directorio.';return;}
     directorMode = false;currentAgentId=found.id;
     found.ultimoAcceso = new Date().toLocaleString('es-ES');
     saveAgents(agents);
@@ -841,6 +843,11 @@ async function yoAccess(){
     directorMode = true;currentAgentId=null;
     errorEl.textContent='';
     closeYoModal('yoLoginModal');
+    if(redirectDirectorToAgentSheet){
+      redirectDirectorToAgentSheet=false;
+      window.location.href=SHEET_URLS.agentes;
+      return;
+    }
     renderDirectorProfile();
     document.getElementById('yoProfileModal').classList.add('show');
   } catch(err) {
@@ -888,8 +895,6 @@ async function importAgentsFromSheet(){
     if(!imported.length)throw new Error('No se reconocieron agentes. Revisa los encabezados de la hoja.');
     const current=getAgents(),byNumber=new Map(current.map(a=>[String(a.numero||'').trim().toLowerCase(),a]));
     const merged=imported.map(a=>{const old=byNumber.get(String(a.numero||'').trim().toLowerCase())||{};return {...old,...a,id:old.id||a.id,password:old.password||'',casos:old.casos||0,pistas:old.pistas||0,expedientes:old.expedientes||0}});
-    const seen=new Set(merged.map(a=>String(a.numero||'').trim().toLowerCase()));
-    current.filter(a=>!seen.has(String(a.numero||'').trim().toLowerCase())).forEach(a=>merged.push(a));
     saveAgents(merged);
     renderDirectorProfile();
     const importStatus=document.getElementById('agentImportStatus');
@@ -945,57 +950,25 @@ function renderAgentProfile(agent){
 
 function renderDirectorProfile(){
   if(!directorMode){renderAgentManagementPanel();return}
-  const agents = getAgents();
-  const activos = agents.filter(a=>normalizeAgentStatus(a.estado)==='ACTIVO').length;
-
-  let rows = agents.map(a=>`
-    <div class="yo-agent-row" id="yoAgentRow_${a.id}">
-      <div><b>${esc(a.numero)}</b> — ${esc(a.nombre)}</div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <span class="yo-pass" id="yoPass_${a.id}">••••••••</span>
-        <button class="yo-show-btn" onclick="toggleAgentPassword('${a.id}')">MOSTRAR</button>
-        <button class="yo-edit-btn" onclick="openEditAgent('${a.id}')">EDITAR</button>
-        <button class="yo-del-btn" onclick="askDeleteAgent('${a.id}')">ELIMINAR</button>
-      </div>
-    </div>`).join('') || '<p style="color:#68747b">No hay agentes registrados todavía.</p>';
-
-  const html = `
+  const agents=getAgents();
+  const activos=agents.filter(a=>normalizeAgentStatus(a.estado)==='ACTIVO').length;
+  const html=`
     <span class="tag">DIRECCIÓN</span>
     <h2>🎖️ DIRECTOR DE LA AGENCIA</h2>
     <div class="yo-profile-row"><b>Cargo</b><span>Director</span></div>
     <div class="yo-profile-row"><b>Nivel de autorización</b><span>MÁXIMO</span></div>
-
     <div class="yo-section-title">Panel del Director</div>
     <div class="yo-stats">
-      <div class="yo-stat"><b>${agents.length}</b><span>Total de agentes</span></div>
+      <div class="yo-stat"><b>${agents.length}</b><span>Total de agentes cargados</span></div>
       <div class="yo-stat"><b>${activos}</b><span>Agentes activos</span></div>
-      <div class="yo-stat"><b>OPERATIVO</b><span>Estado del sistema</span></div>
+      <div class="yo-stat"><b>HOJA OFICIAL</b><span>Directorio administrado en Google Sheets</span></div>
     </div>
-
-    <div class="yo-section-title">SEGURIDAD DEL DIRECTOR</div>
-    <div class="grid" style="margin-bottom:14px">
-      <div class="item" onclick="openDirectorPasswordModal()">
-        <b>🔐 Cambiar contraseña del Director</b>
-        <span>Modifica la contraseña utilizada para entrar en «YO» como Director.</span>
-      </div>
-      <div class="item" onclick="openPortalPasswordModal()">
-        <b>🖥️ Cambiar contraseña del Portal</b>
-        <span>Modifica la contraseña general necesaria para entrar al portal.</span>
-      </div>
-    </div>
-
-    <div class="yo-section-title">PERMISOS DE AGENTES</div>
-    <p>Elige quién puede gestionar el directorio y quién puede ver nombre completo y alias.</p>
-    <div class="yo-field-grid"><div><label>EDITAR AGENTES</label><div id="agentEditPermissions"></div></div><div><label>VER IDENTIDAD</label><div id="agentIdentityPermissions"></div></div></div>
-    <div class="yo-section-title">Contraseñas de agentes / Gestión</div>
-    <button class="yo-primary" style="margin-bottom:10px" onclick="openAddAgent()">＋ AÑADIR AGENTE</button>
-    <button class="yo-secondary" style="margin:0 0 10px 8px" onclick="importAgentsFromSheet()">↻ IMPORTAR AGENTES DE GOOGLE SHEETS</button><div id="agentImportStatus" class="yo-error"></div>
-    <div id="yoAgentsList">${rows}</div>
+    <p>Los datos de identidad, rango y departamento se mantienen en la hoja oficial. Las contraseñas de acceso de agentes se gestionan únicamente desde este portal.</p>
+    <button class="yo-primary" onclick="window.location.href=SHEET_URLS.agentes">GESTIONAR AGENTES EN GOOGLE SHEETS</button>
   `;
-  document.getElementById('yoProfileContent').innerHTML = html;
-  translatePage(localStorage.getItem('agencia_language') || 'ca');
+  document.getElementById('yoProfileContent').innerHTML=html;
+  translatePage(localStorage.getItem('agencia_language')||'ca');
 }
-
 let passwordChangeType = '';
 
 function openDirectorPasswordModal(){
@@ -1344,7 +1317,7 @@ async function syncAgentDirectoryFromSheet(force=false){
   if(!imported.length)throw Error('No se reconocieron registros; revisa encabezados y filas de la hoja');
   const current=getAgents(),byNum=new Map(current.map(a=>[String(a.numero||'').trim().toLowerCase(),a]));
   const merged=imported.map(a=>{const old=byNum.get(String(a.numero||'').trim().toLowerCase())||{};return {...old,...a,id:old.id||a.id,password:old.password||'',casos:old.casos||0,pistas:old.pistas||0,expedientes:old.expedientes||0}});
-  const seen=new Set(merged.map(a=>String(a.numero||'').trim().toLowerCase()));current.filter(a=>!seen.has(String(a.numero||'').trim().toLowerCase())).forEach(a=>merged.push(a));
+  // La hoja es la fuente oficial; no conservar agentes locales que ya no estén en ella.
   saveAgents(merged);agentSheetSyncError='';return true;
  }catch(e){agentSheetSyncError=e.message||'Error de carga';return false}finally{agentSheetLastSync=Date.now();agentSheetSyncPromise=null}})();
  const status=document.getElementById('agentSyncStatus');if(status){status.style.display='block';status.textContent='Conectando con Google Sheets…';}
@@ -1372,7 +1345,7 @@ function renderModule(type){
     '<div class="agent-list-field"><small>ESTADO</small><span class="agent-list-status">'+esc(normalizeAgentStatus(a.estado))+'</span></div>'+
    '</article>'
   ).join('')||'<div class="module-empty">'+(all.length?'NO HAY AGENTES QUE COINCIDAN CON EL FILTRO.':'NO HAY AGENTES GUARDADOS EN ESTE DISPOSITIVO.')+'</div>';
-  const manageBtn=document.querySelector('#agentes .module-toolbar .tech-btn');if(manageBtn)manageBtn.textContent=canManageAgents()?'＋ GESTIONAR AGENTES':'GESTIÓN EXCLUSIVA DEL DIRECTOR';
+  const manageBtn=document.querySelector('#agentes .module-toolbar .tech-btn');if(manageBtn)manageBtn.textContent='GESTIONAR AGENTES';
   if(localStorage.getItem('agencia_language')==='ca')translatePage('ca');
   if(!agentSheetSyncPromise&&Date.now()-agentSheetLastSync>=60000)syncAgentDirectoryFromSheet();
   return;
@@ -1388,7 +1361,7 @@ function renderModule(type){
  const addBtn=document.querySelector('#'+({casos:'casos',avisos:'comunicaciones',expedientes:'expedientes',pistas:'pistas'}[type])+' .module-toolbar .tech-btn');if(addBtn)addBtn.style.display=moduleAdmin()?'':'none';
  if(localStorage.getItem('agencia_language')==='ca')translatePage('ca');
 }
-function openAgentManagement(){if(canManageAgents()){renderDirectorProfile();document.getElementById('yoProfileModal').classList.add('show')}else openYoLogin();}
+function openAgentManagement(){redirectDirectorToAgentSheet=true;openYoLogin();}
 function renderAgentPermissionControls(agents){const p=getAgentPermissions();const make=(key)=>agents.map(a=>'<label style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" style="width:auto" '+(p[key].includes(a.id)?'checked':'')+' onchange="toggleAgentPermission(\''+key+'\',\''+a.id+'\',this.checked)">'+esc(a.numero)+' — '+esc(a.nombre||a.alias||'Agente')+'</label>').join('')||'Sin agentes';document.getElementById('agentEditPermissions').innerHTML=make('editAgentIds');document.getElementById('agentIdentityPermissions').innerHTML=make('viewIdentityIds')}
 function toggleAgentPermission(key,id,checked){if(!directorMode)return;const p=getAgentPermissions();p[key]=p[key]||[];p[key]=checked?[...new Set([...p[key],id])]:p[key].filter(x=>x!==id);saveAgentPermissions(p)}
 function renderAgentManagementPanel(){const a=getAgents();document.getElementById('yoProfileContent').innerHTML='<span class="tag">GESTIÓN AUTORIZADA</span><h2>DIRECTORIO DE AGENTES</h2><button class="yo-primary" onclick="openAddAgent()">＋ AÑADIR AGENTE</button>'+a.map(x=>'<div class="yo-agent-row"><b>'+esc(x.numero)+' — '+esc(canViewAgentIdentity(x)?x.nombre:(x.alias||'Identidad restringida'))+'</b><button class="yo-edit-btn" onclick="openEditAgent(\''+x.id+'\')">EDITAR</button></div>').join('')}
