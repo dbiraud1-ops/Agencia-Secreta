@@ -963,8 +963,10 @@ function renderDirectorProfile(){
       <div class="yo-stat"><b>${activos}</b><span>Agentes activos</span></div>
       <div class="yo-stat"><b>HOJA OFICIAL</b><span>Directorio administrado en Google Sheets</span></div>
     </div>
-    <p>Los datos de identidad, rango y departamento se mantienen en la hoja oficial. Las contraseñas de acceso de agentes se gestionan únicamente desde este portal.</p>
-    <button class="yo-primary" onclick="window.location.href=SHEET_URLS.agentes">GESTIONAR AGENTES EN GOOGLE SHEETS</button>
+    <p>Los datos de identidad, rango y departamento se mantienen en la hoja oficial. Las contraseñas de acceso de agentes se gestionan únicamente desde este portal y quedan guardadas en este navegador.</p>
+    <button class="yo-primary" onclick="window.location.href=SHEET_URLS.agentes">GESTIONAR DATOS EN GOOGLE SHEETS</button>
+    <div class="yo-section-title">CONTRASEÑAS DE AGENTES</div>
+    ${agents.map(a=>`<div class="yo-agent-row"><b>${esc(a.numero)} — ${esc(a.nombre)}</b><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="yo-pass" id="yoPass_${a.id}">••••••••</span><button class="yo-show-btn" onclick="toggleAgentPassword('${a.id}')">MOSTRAR</button><button class="yo-edit-btn" onclick="changeAgentPassword('${a.id}')">CAMBIAR CONTRASEÑA</button></div></div>`).join('')||'<p>No hay agentes en la hoja.</p>'}
   `;
   document.getElementById('yoProfileContent').innerHTML=html;
   translatePage(localStorage.getItem('agencia_language')||'ca');
@@ -1028,6 +1030,22 @@ function savePasswordChange(){
   else setPortalPassword(next);
   closeYoModal('yoPasswordChangeModal');
   renderDirectorProfile();
+}
+
+function changeAgentPassword(id){
+  if(!directorMode){alert('Solo Dirección puede cambiar contraseñas.');return;}
+  const agents=getAgents(),agent=agents.find(a=>a.id===id);
+  if(!agent)return;
+  const next=prompt('Introduce la nueva contraseña para el agente '+(agent.numero||'')+'.');
+  if(next===null)return;
+  const password=next.trim();
+  if(password.length<4){alert('La contraseña debe tener al menos 4 caracteres.');return;}
+  if(password===getDirectorAuthPassword()){alert('La contraseña del agente no puede coincidir con la de Dirección.');return;}
+  if(agents.some(a=>a.id!==id&&a.password===password)){alert('Esa contraseña ya está asignada a otro agente.');return;}
+  agent.password=password;
+  saveAgents(agents);
+  renderDirectorProfile();
+  alert('Contraseña actualizada en este navegador. No se ha enviado a Google Sheets.');
 }
 
 function toggleAgentPassword(id){
