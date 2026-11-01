@@ -738,6 +738,21 @@ const SHEET_URLS = {
   avisos: 'https://docs.google.com/spreadsheets/d/1Hn_oprid9VGgd7w5jP654yWw31Ap3cRb6mxYA8kk3Vw/edit?usp=sharing',
   agentes: 'https://docs.google.com/spreadsheets/d/1knpqWSvA_-HV6ds3S1_zfnlGra0Rntruyr5yfxckNLI/edit?usp=sharing'
 };
+const AGENCY_API_BASE = 'https://agencia-secreta-backend-dbp3.vercel.app';
+const AGENCY_ADMIN_TOKEN_KEY = 'agencia_admin_session';
+
+async function syncAgencyRecord(type, record) {
+  const token = sessionStorage.getItem(AGENCY_ADMIN_TOKEN_KEY);
+  if (!token) throw new Error('La sesión segura del Director no está activa. Vuelve a entrar en YO.');
+  const response = await fetch(AGENCY_API_BASE + '/api/sync', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ type, record })
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || 'No se pudo sincronizar con Google Sheets.');
+  return result;
+}
 const PORTAL_PASSWORD_STORAGE_KEY = 'agencia_portal_password';
 const DIRECTOR_PASSWORD_STORAGE_KEY = 'agencia_director_password';
 const DEFAULT_PORTAL_PASSWORD = 'agencia26';
@@ -751,7 +766,7 @@ function setDirectorPassword(password){ localStorage.setItem(DIRECTOR_PASSWORD_S
 function login(){const input=document.getElementById('loginPassword'),error=document.getElementById('loginError'),msg=document.getElementById('authorizedMessage');
 if(input.value===getPortalPassword()){authenticated=true;error.textContent='';msg.classList.add('show');document.getElementById('authScreen').style.display='none';document.getElementById('protectedContent').style.display='block';document.getElementById('mainNav').classList.remove('hidden');showPage('inicio')}
 else{msg.classList.remove('show');error.textContent='Contraseña incorrecta. Acceso denegado.';input.select()}}
-function logout(){authenticated=false;document.getElementById('protectedContent').style.display='none';document.getElementById('mainNav').classList.add('hidden');document.getElementById('authScreen').style.display='flex';document.getElementById('loginPassword').value='';document.getElementById('loginError').textContent='';document.getElementById('authorizedMessage').classList.remove('show')}
+function logout(){authenticated=false;directorMode=false;sessionStorage.removeItem(AGENCY_ADMIN_TOKEN_KEY);document.getElementById('protectedContent').style.display='none';document.getElementById('mainNav').classList.add('hidden');document.getElementById('authScreen').style.display='flex';document.getElementById('loginPassword').value='';document.getElementById('loginError').textContent='';document.getElementById('authorizedMessage').classList.remove('show')}
 function requireAuth(){if(!authenticated){document.getElementById('authScreen').style.display='flex';return false}return true}
 function showPage(id){if(!requireAuth())return;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const target=document.getElementById(id);if(target)target.classList.add('active');document.querySelectorAll('#mainNav button').forEach(b=>{const onclick=b.getAttribute('onclick')||'';b.classList.toggle('active',onclick.includes("showPage('"+id+"')"))});window.scrollTo({top:0,behavior:'smooth'});if(['casos','agentes','expedientes','pistas'].includes(id))renderModule(id)}
 function loadSheet(type){const frame=document.getElementById(type+'Frame');const url=SHEET_URLS[type];if(frame&&url&&!frame.src)frame.src=url}
@@ -795,19 +810,12 @@ function closeYoModal(id){
   document.getElementById(id).classList.remove('show');
 }
 
-function yoAccess(){
+async function yoAccess(){
   const pass = document.getElementById('yoPasswordInput').value;
   const errorEl = document.getElementById('yoLoginError');
   if(!pass){ errorEl.textContent='Introduce una contraseña.'; return; }
 
-  if(pass === getDirectorAuthPassword()){
-    directorMode = true;currentAgentId=null;
-    closeYoModal('yoLoginModal');
-    renderDirectorProfile();
-    document.getElementById('yoProfileModal').classList.add('show');
-    return;
-  }
-
+  // Las contraseñas de agentes se comprueban localmente y nunca se envían al backend.
   const agents = getAgents();
   const found = agents.find(a=>a.password===pass);
   if(found){
@@ -820,7 +828,24 @@ function yoAccess(){
     return;
   }
 
-  errorEl.textContent='Contraseña incorrecta. Acceso denegado.';
+  errorEl.textContent='Verificando acceso de Dirección…';
+  try {
+    const response = await fetch(AGENCY_API_BASE + '/api/auth/login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({password:pass})
+    });
+    const result = await response.json().catch(()=>({}));
+    if(!response.ok) throw new Error(result.error || 'No se pudo verificar la sesión del Director.');
+    sessionStorage.setItem(AGENCY_ADMIN_TOKEN_KEY,result.token);
+    directorMode = true;currentAgentId=null;
+    errorEl.textContent='';
+    closeYoModal('yoLoginModal');
+    renderDirectorProfile();
+    document.getElementById('yoProfileModal').classList.add('show');
+  } catch(err) {
+    errorEl.textContent=err.message || 'Contraseña incorrecta. Acceso denegado.';
+  }
 }
 
 function yoLogout(){
@@ -999,6 +1024,10 @@ function resetPasswordChangeForm(){
 }
 
 function savePasswordChange(){
+  if(passwordChangeType==='director'){
+    document.getElementById('yoPasswordChangeError').textContent='La contraseña segura del Director se gestiona desde las variables privadas del proyecto Vercel.';
+    return;
+  }
   const current=document.getElementById('changeCurrentPassword').value;
   const next=document.getElementById('changeNewPassword').value;
   const confirm=document.getElementById('changeConfirmPassword').value;
@@ -1180,7 +1209,7 @@ function openEditAgent(id){
   document.getElementById('yoAgentFormModal').classList.add('show');
 }
 
-function saveAgentForm(){
+async function saveAgentForm(){
   if(!canManageAgents()){alert('No tienes permiso para guardar cambios de agentes.');return}
   const errorEl = document.getElementById('yoAgentFormError');
   errorEl.textContent='';
@@ -1235,6 +1264,21 @@ function saveAgentForm(){
   if(document.getElementById('agentes')?.classList.contains('active'))renderModule('agentes');
   closeYoModal('yoAgentFormModal');
   renderDirectorProfile();
+  if(directorMode && sessionStorage.getItem(AGENCY_ADMIN_TOKEN_KEY)){
+    try {
+      await syncAgencyRecord('agents', {
+        id:data.id, numero:data.numero, nombre:data.nombre, alias:data.alias,
+        fecha:data.fecha, estado:data.estado, rango:data.rango, nivel:data.nivel,
+        unidad:data.unidad, especialidad:data.especialidad,
+        observaciones:agents.find(a=>a.id===data.id)?.observaciones || ''
+      });
+      alert('Agente guardado y sincronizado con Google Sheets. La contraseña permanece solo en la web.');
+    } catch(err) {
+      alert('Agente guardado en esta web, pero no se pudo sincronizar: ' + err.message);
+    }
+  } else {
+    alert('Agente guardado en esta web. Para sincronizarlo con Google Sheets debes entrar como Director.');
+  }
 }
 
 function askDeleteAgent(id){
@@ -1362,15 +1406,30 @@ function openRecordForm(type,id=''){
  document.getElementById('recordModal').classList.add('show');
 }
 function closeRecordModal(){document.getElementById('recordModal').classList.remove('show');}
-function saveRecord(e){
+async function saveRecord(e){
  e.preventDefault();if(!moduleAdmin())return;
  const cfg=MODULE_CONFIG[activeRecordType],form=new FormData(document.getElementById('recordForm')),data={};
  cfg.fields.forEach(([key])=>data[key]=String(form.get(key)||'').trim());
  if(cfg.fields.some(([key,,kind,required])=>required===true&&!data[key])){document.getElementById('recordError').textContent='Completa todos los campos obligatorios.';return}
  const rows=moduleRecords(activeRecordType);
- if(editingRecordId){const i=rows.findIndex(x=>x.id===editingRecordId);if(i>=0)rows[i]={...rows[i],...data,updatedAt:new Date().toISOString()}}
- else rows.unshift({id:activeRecordType+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),...data,createdAt:new Date().toISOString()});
+ let savedRecord;
+ if(editingRecordId){
+   const i=rows.findIndex(x=>x.id===editingRecordId);
+   if(i>=0){rows[i]={...rows[i],...data,updatedAt:new Date().toISOString()};savedRecord=rows[i];}
+ } else {
+   savedRecord={id:activeRecordType+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),...data,createdAt:new Date().toISOString()};
+   rows.unshift(savedRecord);
+ }
  saveModuleRecords(activeRecordType,rows);const t=activeRecordType;closeRecordModal();renderModule(t);
+ const syncType=t==='casos'?'cases':t==='avisos'?'notices':null;
+ if(syncType && savedRecord){
+   try {
+     await syncAgencyRecord(syncType,savedRecord);
+     alert('Registro guardado y sincronizado con Google Sheets.');
+   } catch(err) {
+     alert('Registro guardado en esta web, pero no se pudo sincronizar: '+err.message);
+   }
+ }
 }
 function deleteRecord(type,id){
  if(!moduleAdmin())return;if(!confirm('¿Confirmas que quieres eliminar este registro?'))return;
