@@ -638,7 +638,7 @@ footer{font:9px ui-monospace,monospace;letter-spacing:.12em}
     <input id="yoPasswordInput" type="password" autocomplete="off" placeholder="Contraseña personal">
     <div id="yoLoginError" class="yo-error"></div>
     <div class="yo-btn-row">
-      <button class="yo-secondary" onclick="closeYoModal('yoLoginModal')">CANCELAR</button>
+      <button class="yo-secondary" onclick="cancelYoLogin()">CANCELAR</button>
       <button class="yo-primary" onclick="yoAccess()">ACCEDER</button>
     </div>
   </div>
@@ -801,7 +801,8 @@ function esc(v){
   return String(v).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
 }
 
-function openYoLogin(){
+function openYoLogin(manageAgents=false){
+  redirectDirectorToAgentSheet=!!manageAgents;
   document.getElementById('yoPasswordInput').value='';
   document.getElementById('yoLoginError').textContent='';
   document.getElementById('yoLoginModal').classList.add('show');
@@ -810,6 +811,7 @@ function openYoLogin(){
 function closeYoModal(id){
   document.getElementById(id).classList.remove('show');
 }
+function cancelYoLogin(){redirectDirectorToAgentSheet=false;closeYoModal('yoLoginModal');}
 
 async function yoAccess(){
   const pass = document.getElementById('yoPasswordInput').value;
@@ -1379,7 +1381,7 @@ function renderModule(type){
  const addBtn=document.querySelector('#'+({casos:'casos',avisos:'comunicaciones',expedientes:'expedientes',pistas:'pistas'}[type])+' .module-toolbar .tech-btn');if(addBtn)addBtn.style.display=moduleAdmin()?'':'none';
  if(localStorage.getItem('agencia_language')==='ca')translatePage('ca');
 }
-function openAgentManagement(){redirectDirectorToAgentSheet=true;openYoLogin();}
+function openAgentManagement(){openYoLogin(true);}
 function renderAgentPermissionControls(agents){const p=getAgentPermissions();const make=(key)=>agents.map(a=>'<label style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" style="width:auto" '+(p[key].includes(a.id)?'checked':'')+' onchange="toggleAgentPermission(\''+key+'\',\''+a.id+'\',this.checked)">'+esc(a.numero)+' — '+esc(a.nombre||a.alias||'Agente')+'</label>').join('')||'Sin agentes';document.getElementById('agentEditPermissions').innerHTML=make('editAgentIds');document.getElementById('agentIdentityPermissions').innerHTML=make('viewIdentityIds')}
 function toggleAgentPermission(key,id,checked){if(!directorMode)return;const p=getAgentPermissions();p[key]=p[key]||[];p[key]=checked?[...new Set([...p[key],id])]:p[key].filter(x=>x!==id);saveAgentPermissions(p)}
 function renderAgentManagementPanel(){const a=getAgents();document.getElementById('yoProfileContent').innerHTML='<span class="tag">GESTIÓN AUTORIZADA</span><h2>DIRECTORIO DE AGENTES</h2><button class="yo-primary" onclick="openAddAgent()">＋ AÑADIR AGENTE</button>'+a.map(x=>'<div class="yo-agent-row"><b>'+esc(x.numero)+' — '+esc(canViewAgentIdentity(x)?x.nombre:(x.alias||'Identidad restringida'))+'</b><button class="yo-edit-btn" onclick="openEditAgent(\''+x.id+'\')">EDITAR</button></div>').join('')}
